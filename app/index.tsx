@@ -1,4 +1,5 @@
 import React from 'react';
+import { router } from 'expo-router';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useFonts } from "expo-font";
 
@@ -8,6 +9,7 @@ export default function Index() {
     "NunitoSans": require("../assets/fonts/NunitoSans.ttf"),
     "NunitoSansBold": require("../assets/fonts/NunitoSansBold.ttf"),
     "NunitoSansSemiBold": require("../assets/fonts/NunitoSansSemiBold.ttf"),
+    "NunitoSansExtraBold": require("../assets/fonts/NunitoSansExtraBold.ttf"),  
   });
   if(!fontsLoaded) return <Text>Loading...</Text>; 
 
@@ -24,8 +26,11 @@ export default function Index() {
           <Text style={styles.langButtonText}>中文</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.beginButton}>
-        <Text style={styles.beginButtonText}>Login</Text>
+      <TouchableOpacity style={styles.beginButton} onPress={() => router.push('/welcome')}>
+        <Text style={styles.beginButtonText}>Continue as Guest</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.beginButton} onPress={() => router.push('/login')}>
+        <Text style={styles.beginButtonText}>Login / Signup</Text> 
       </TouchableOpacity>
     </View>
   );
@@ -39,16 +44,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    fontSize: 50,
+    fontSize: 60,
     fontWeight: 'bold',
-    color: '#000000',
+    color: '#1E314F',
+    fontFamily: 'NunitoSansExtraBold',
+    marginTop: 50,
   },
   logo: {
     width: 300,
     height: 300,
   },
   description: {
-    fontSize: 25,
+    fontSize: 22,
     color: '#000000',
     textAlign: 'center',
     width: '45%',
@@ -60,7 +67,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '60%',
-    marginBottom: 40,
+    marginBottom: 30,
   },
   langButton: {
     backgroundColor: '#FEFEFE',
@@ -68,6 +75,15 @@ const styles = StyleSheet.create({
     width: '45%',
     alignItems: 'center',
     borderRadius: 15,
+
+    // Shadow for iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+
+    // Shadow for Android
+    elevation: 8,
   },
   langButtonText: {
     color: '#508991',
@@ -78,15 +94,24 @@ const styles = StyleSheet.create({
   beginButton: {
     backgroundColor: '#FFE7C3',
     padding: 15,
-    width: '50%',
+    width: '75%',
     alignItems: 'center',
     borderRadius: 40,
-    position: 'absolute',
-    bottom: 60,
+    marginBottom: 10,
+
+    // Shadow for iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+
+    // Shadow for Android
+    elevation: 8,
   },
   beginButtonText: {
     color: '#1E314F',
-    fontSize: 30,
+    fontSize: 28,
     fontWeight: 'bold',
+    fontFamily: 'NunitoSansExtraBold',
   },
 });
