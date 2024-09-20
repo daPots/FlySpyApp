@@ -6,9 +6,9 @@ import { useFonts } from "expo-font";
 
 export default function Index() {
   const [fontsLoaded] = useFonts({
-    "NunitoSans": require("../assets/fonts/NunitoSans.ttf"),
+    "NunitoSansRegular": require("../assets/fonts/NunitoSansRegular.ttf"),
+    "NunitoSansMedium": require("../assets/fonts/NunitoSansMedium.ttf"),  
     "NunitoSansBold": require("../assets/fonts/NunitoSansBold.ttf"),
-    "NunitoSansSemiBold": require("../assets/fonts/NunitoSansSemiBold.ttf"),
     "NunitoSansExtraBold": require("../assets/fonts/NunitoSansExtraBold.ttf"),  
   });
   if(!fontsLoaded) return <Text>Loading...</Text>; 
@@ -26,7 +26,7 @@ export default function Index() {
           <Text style={styles.langButtonText}>中文</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.beginButton} onPress={() => router.push('/welcome')}>
+      <TouchableOpacity style={styles.beginButton} onPress={() => router.push('/form')}>
         <Text style={styles.beginButtonText}>Continue as Guest</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.beginButton} onPress={() => router.push('/login')}>
@@ -49,10 +49,12 @@ const styles = StyleSheet.create({
     color: '#1E314F',
     fontFamily: 'NunitoSansExtraBold',
     marginTop: 50,
+    marginBottom: 30,
   },
   logo: {
-    width: 300,
-    height: 300,
+    width: 200,
+    height: 208,
+    marginBottom: 30,
   },
   description: {
     fontSize: 22,

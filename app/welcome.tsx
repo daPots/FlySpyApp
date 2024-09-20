@@ -4,7 +4,7 @@ import { View, Text, StyleSheet } from 'react-native';
 export default function Welcome() {
   return (
     <View>
-      <Text>Form</Text>
+      <Text>Welcome</Text>
     </View>
   );
 }
