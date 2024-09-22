@@ -33,14 +33,14 @@ export default function Home() {
 						<ScrollView style={styles.vidContainer} horizontal>
 							<Video
 								style={[styles.video, { marginRight: 10 }]}
-								source={require("../assets/videos/flycourting.mp4")}
+								source={require("../assets/videos/fly.mp4")}
 								useNativeControls
 								isLooping
 								resizeMode={ResizeMode.COVER}
 							/>
 							<Video
 								style={styles.video}
-								source={require("../assets/videos/flycourting.mp4")}
+								source={require("../assets/videos/fly.mp4")}
 								useNativeControls
 								isLooping
 								resizeMode={ResizeMode.COVER}
