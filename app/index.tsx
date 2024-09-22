@@ -26,7 +26,7 @@ export default function Index() {
           <Text style={styles.langButtonText}>中文</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.beginButton} onPress={() => router.push('/form')}>
+      <TouchableOpacity style={styles.beginButton} onPress={() => router.push('/home')}>
         <Text style={styles.beginButtonText}>Continue as Guest</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.beginButton} onPress={() => router.push('/login')}>
