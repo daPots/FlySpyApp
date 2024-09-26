@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { router } from 'expo-router';
 import {SafeAreaView,View,ScrollView,Text,StyleSheet,StatusBar,Image,TextInput, TouchableOpacity, FlatList} from 'react-native';
 import RadioGroup, {RadioButtonProps} from 'react-native-radio-buttons-group';
 // documentation for radio buttons: https://www.npmjs.com/package/react-native-radio-buttons-group
@@ -11,6 +12,7 @@ import * as ImagePicker from "expo-image-picker";
 import MapView, {Marker, MapPressEvent} from 'react-native-maps';
 // documentation for map view: https://docs.expo.dev/versions/latest/sdk/map-view/
 import * as Location from 'expo-location';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6'; // Example using Ionicons
 
 export default function Form() {
 	// options for "have you seen flies on flowers as pictured below?"
@@ -19,6 +21,13 @@ export default function Form() {
 		{ id: 'yes', label: 'Yes', value: 'Yes' },
 		{ id: 'no', label: 'No', value: 'No' }
 	  ]), []);
+
+	// storing the selected date flowers were seen
+	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+	const onDateChange = (event: any, selectedDate: Date | undefined) => {
+		if (selectedDate) setSelectedDate(selectedDate);
+	};
+
 	// options for "in what type of place did you see the flies?"
 	const [selectedLocationType, setSelectedLocationType] = useState<string | undefined>();
 	const locationType: RadioButtonProps[] = useMemo(() => ([
@@ -29,12 +38,6 @@ export default function Form() {
 		{ id: 'campus', label: 'School Campus', value: 'School Campus' },
 		{ id: 'other', value: 'Other', label: <TextInput style={styles.locationTypeInput} placeholder="Other"/> }
 	]), []);
-
-	// storing the selected date flowers were seen
-	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-	const onDateChange = (event: any, selectedDate: Date | undefined) => {
-		if (selectedDate) setSelectedDate(selectedDate);
-	};
 
 	// storing given address/location
 	const [address, setAddress] = useState<string>('');
@@ -59,7 +62,6 @@ export default function Form() {
 		setLocation({ latitude, longitude });
 		setCoordsText(`${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
 	};
-	
 
 	// all flower options
   	type flowerObj = {id: string, flowerName: string, flowerGenus: string, flowerImg: any};
@@ -141,21 +143,33 @@ export default function Form() {
 	const [isChecked, setChecked] = useState(new Array(timeData.length).fill(false));
 	function toCheck (timeItem: timeObj) {setChecked(isChecked.map((e, idx) => (idx === timeItem.id ? !e : e)));}
 
-  // ImagePicker -----------------------------
-  const [image, setImage] = useState<string | null>(null);
-  const pickImage = async () => {
-		// No permissions request is necessary for launching the image library
-		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.All,
-			allowsEditing: true,
-			aspect: [4, 3],
-			quality: 1,
-		});
-		if (!result.canceled) setImage(result.assets[0].uri);
-  };
+	// ImagePicker -----------------------------
+	const [image, setImage] = useState<string | null>(null);
+	const pickImage = async () => {
+			// No permissions request is necessary for launching the image library
+			let result = await ImagePicker.launchImageLibraryAsync({
+				mediaTypes: ImagePicker.MediaTypeOptions.All,
+				allowsEditing: true,
+				aspect: [4, 3],
+				quality: 1,
+			});
+			if (!result.canceled) setImage(result.assets[0].uri);
+	};
 
-  return (
+	// storing additional information
+	const [additionalInfo, setAdditionalInfo] = useState<string>('');
+
+	// submit form -> send data to backend/database
+	const handleSubmit = async () => {
+		console.log(selectedFlyIdentify, selectedLocationType, selectedDate, address, location, additionalInfo);
+		router.push('/completed');
+	};
+
+  	return (
 		<SafeAreaView style={styles.container}>
+			<TouchableOpacity onPress={()=>router.push('/home')} style={styles.homeButton}>
+				<FontAwesome6 name="house" size={50} color="#1E314F" />
+			</TouchableOpacity>
 			<ScrollView style={styles.scrollView}>
 				<View style={{ marginTop: 40 }}></View>
 				<View style={styles.questionCard}>
@@ -301,7 +315,7 @@ export default function Form() {
 						Please add any information that might be helpful to the researchers.
 					</Text>
 					<View style={{ flexDirection: "row", alignItems: "center" }}>
-						<TextInput multiline style={styles.additionInfoInput} />
+						<TextInput multiline style={styles.additionInfoInput} onChangeText={setAdditionalInfo} />
 					</View>
 				</View>
 				<TouchableOpacity
@@ -309,7 +323,7 @@ export default function Form() {
 						styles.button,
 						{ alignSelf: "center", width: "100%", backgroundColor: "#FFE7C3" },
 					]}>
-					<Text style={[styles.buttonText, { color: "#1E314F" }]}>Submit Form</Text>
+					<Text style={[styles.buttonText, { color: "#1E314F" }]} onPress={handleSubmit}>Submit Form</Text>
 				</TouchableOpacity>
 			</ScrollView>
 		</SafeAreaView>
@@ -322,12 +336,15 @@ const styles = StyleSheet.create({
 		paddingTop: StatusBar.currentHeight,
 		backgroundColor: "white",
 	},
+	homeButton: {
+		marginBottom: 10,
+		alignSelf: 'center',
+	},
 	scrollView: {
 		marginHorizontal: 20,
 	},
 	questionCard: {
 		flex: 1,
-
 		backgroundColor: "#F5F5F5",
 		borderRadius: 20,
 		padding: 20,
