@@ -8,97 +8,97 @@ import Checkbox from 'expo-checkbox';
  // documentation for checkbox: https://docs.expo.dev/versions/latest/sdk/checkbox/
 import * as ImagePicker from "expo-image-picker";
 // documentation for date picker: https://github.com/react-native-datetimepicker/datetimepicker?tab=readme-ov-file
-
+import MapView, {Marker, MapPressEvent} from 'react-native-maps';
+// documentation for map view: https://docs.expo.dev/versions/latest/sdk/map-view/
+import * as Location from 'expo-location';
 
 export default function Form() {
-  const flyIdentify: RadioButtonProps[] = useMemo(() => ([
-    {id: 'yes', label: 'Yes', value: 'Yes'},
-    {id: 'no', label: 'No', value: 'No'}
-  ]), []);
-  const locationType: RadioButtonProps[] = useMemo(() => ([
-    {id: 'park', label: 'Park', value: 'Park'},
-    {id: 'bgarden', label: 'Botanical Garden', value: 'Botanical Garden'},
-    {id: 'rgarden', label: 'Residence [Garden]', value: 'Residence [Garden]'},
-    {id: 'farm', label: 'Farm', value: 'Farm'},  
-    {id: 'campus', label: 'School Campus', value: 'School Campus'},  
-    {id: 'other', value: 'Other',
-      label:
-        <TextInput
-          style={styles.locationTypeInput}
-          placeholder="Other"/>
-    },   
-  ]), []);
-  type flowerObj = {
-	id: string;
-	  flowerName: string;
-	  flowerGenus: string;
-	  flowerImg: any;
-  };
-  const flowerData = [
-		{
-			id: "morning_glory",
-			flowerName: "Morning Glory",
-			flowerGenus: "genus Ipomoea",
+	// options for "have you seen flies on flowers as pictured below?"
+	const [selectedFlyIdentify, setSelectedFlyIdentify] = useState<string | undefined>();
+	const flyIdentify: RadioButtonProps[] = useMemo(() => ([
+		{ id: 'yes', label: 'Yes', value: 'Yes' },
+		{ id: 'no', label: 'No', value: 'No' }
+	  ]), []);
+	// options for "in what type of place did you see the flies?"
+	const [selectedLocationType, setSelectedLocationType] = useState<string | undefined>();
+	const locationType: RadioButtonProps[] = useMemo(() => ([
+		{ id: 'park', label: 'Park', value: 'Park' },
+		{ id: 'bgarden', label: 'Botanical Garden', value: 'Botanical Garden' },
+		{ id: 'rgarden', label: 'Residence [Garden]', value: 'Residence [Garden]' },
+		{ id: 'farm', label: 'Farm', value: 'Farm' },
+		{ id: 'campus', label: 'School Campus', value: 'School Campus' },
+		{ id: 'other', value: 'Other', label: <TextInput style={styles.locationTypeInput} placeholder="Other"/> }
+	]), []);
+
+	// storing the selected date flowers were seen
+	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+	const onDateChange = (event: any, selectedDate: Date | undefined) => {
+		if (selectedDate) setSelectedDate(selectedDate);
+	};
+
+	// storing given address/location
+	const [address, setAddress] = useState<string>('');
+
+	// storing coordinates for location of fly sighting
+	const [location, setLocation] = useState({ latitude: 37.78825, longitude: -122.4324 });
+	const [coordsText, setCoordsText] = useState<string>('');
+	const handleLocateMe = async () => {
+		let { status } = await Location.requestForegroundPermissionsAsync();
+		if(status !== 'granted') {
+			alert('Permission to access location was denied');
+			return;
+		}
+
+		let userLocation = await Location.getCurrentPositionAsync({});
+		const { latitude, longitude } = userLocation.coords;
+		setLocation({ latitude, longitude });
+		setCoordsText(`${latitude}, ${longitude}`);
+	};
+	const handleMapPress = (event: MapPressEvent) => {
+		const { latitude, longitude } = event.nativeEvent.coordinate;
+		setLocation({ latitude, longitude });
+		setCoordsText(`${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
+	};
+	
+
+	// all flower options
+  	type flowerObj = {id: string, flowerName: string, flowerGenus: string, flowerImg: any};
+  	const flowerData = [
+		{ id: "morning_glory", flowerName: "Morning Glory", flowerGenus: "genus Ipomoea",
 			flowerImg: require("../assets/images/morning_glory.png"),
 		},
-		{
-			id: "hibiscus",
-			flowerName: "Hibiscus",
-			flowerGenus: "genus Hibiscus",
+		{ id: "hibiscus", flowerName: "Hibiscus", flowerGenus: "genus Hibiscus",
 			flowerImg: require("../assets/images/hibiscus.png"),
 		},
-		{
-			id: "jasmine",
-			flowerName: "Brazilian Jasmine",
-			flowerGenus: "genus Mandevilla",
+		{ id: "jasmine", flowerName: "Brazilian Jasmine", flowerGenus: "genus Mandevilla",
 			flowerImg: require("../assets/images/brazilian_jasmine.png"),
 		},
-		{
-			id: "ginger",
-			flowerName: "Wild Ginger",
-			flowerGenus: "genus Alpinia",
+		{ id: "ginger", flowerName: "Wild Ginger", flowerGenus: "genus Alpinia",
 			flowerImg: require("../assets/images/wild_ginger.png"),
 		},
-		{
-			id: "angel_trumpet",
-			flowerName: "Angel's Trumpet",
-			flowerGenus: "genus Brugmansia",
+		{ id: "angel_trumpet", flowerName: "Angel's Trumpet", flowerGenus: "genus Brugmansia",
 			flowerImg: require("../assets/images/angels_trumpet.png"),
 		},
-		{
-			id: "king_mantle",
-			flowerName: "Bush Clock Vine/ King's Mantle",
-			flowerGenus: "genus Thunbergia Erecta",
+		{ id: "king_mantle", flowerName: "Bush Clock Vine/ King's Mantle", flowerGenus: "genus Thunbergia Erecta",
 			flowerImg: require("../assets/images/thunbergia_erecta.png"),
 		},
-		{
-			id: "amyrillis",
-			flowerName: "Red-Netted Amyrillis",
-			flowerGenus: "Hippeaestrum",
+		{ id: "amyrillis", flowerName: "Red-Netted Amyrillis", flowerGenus: "Hippeaestrum",
 			flowerImg: require("../assets/images/rednetted_amyrillis.png"),
 		},
-		{
-			id: "garlic_vine",
-			flowerName: "Garlic Vine",
-			flowerGenus: "genus Mansoa",
+		{ id: "garlic_vine", flowerName: "Garlic Vine", flowerGenus: "genus Mansoa",
 			flowerImg: require("../assets/images/garlic_vine.png"),
 		},
-		{
-			id: "rhododendron",
-			flowerName: "Rhododendron",
-			flowerGenus: "genus Rhododendron",
+		{ id: "rhododendron", flowerName: "Rhododendron", flowerGenus: "genus Rhododendron",
 			flowerImg: require("../assets/images/rhododendron.png"),
 		},
-		{
-			id: "zephyr_lily",
-			flowerName: "Rosepink Zephyr Lily/ Pink Rain Lily",
-			flowerGenus: "genus Zephyrlily",
+		{ id: "zephyr_lily", flowerName: "Rosepink Zephyr Lily/ Pink Rain Lily", flowerGenus: "genus Zephyrlily",
 			flowerImg: require("../assets/images/zephyr_lily.png"),
 		},
 	];
-  const [selectedFlower, setSelectedFlower] = useState<string|undefined>();
+	const [selectedFlower, setSelectedFlower] = useState<string|undefined>();
   
-  const renderItem = ({ item }: { item: flowerObj }) => {
+	// render all flower options
+	const renderItem = ({ item }: { item: flowerObj }) => {
 		const color = item.id === selectedFlower ? "#508991" : "black";
 		return (
 			<TouchableOpacity
@@ -109,77 +109,37 @@ export default function Form() {
 				onPress={() => {
 					setSelectedFlower(item.id);
 					console.log(item.id);
-				}}
-			>
+				}}>
 				<Text
 					style={[
 						styles.text,
 						{ width: "100%" },
 						item.id == selectedFlower ? { color: color } : {},
-					]}
-				>
+					]}>
 					{item.flowerName} ({item.flowerGenus})
 				</Text>
 				<Image style={styles.flowerImg} source={item.flowerImg} />
 			</TouchableOpacity>
 		);
 	};
-	type timeObj= {
-		id: number;
-		time: string;
-	};
+	type timeObj= {id: number, time: string};
 
-  //MultiSelect---
+  	// multi-select for time of fly sighting 
 	const timeData: timeObj[] = [
-		{
-			id: 0,
-			time: "12AM - 4AM",
-		},
-		{
-			id: 1,
-			time: "4AM - 6AM",
-		},
-		{
-			id: 2,
-			time: "6AM - 8AM",
-		},
-		{
-			id: 3,
-			time: "8AM - 10AM",
-		},
-		{
-			id: 4,
-			time: "10AM - 12PM",
-		},
-		{
-			id: 5,
-			time: "12PM - 2PM",
-		},
-		{
-			id: 6,
-			time: "2PM - 4PM",
-		},
-		{
-			id: 7,
-			time: "4PM - 6PM",
-		},
-		{
-			id: 8,
-			time: "6PM - 8PM",
-		},
-		{
-			id: 9,
-			time: "8PM - 10PM",
-		},
-		{
-			id: 10,
-			time: "10PM - 12PM",
-		},
+		{id: 0, time: "12AM - 4AM"},
+		{id: 1, time: "4AM - 6AM"},
+		{id: 2, time: "6AM - 8AM"},
+		{id: 3, time: "8AM - 10AM"},
+		{id: 4, time: "10AM - 12PM"},
+		{id: 5, time: "12PM - 2PM"},
+		{id: 6, time: "2PM - 4PM"},
+		{id: 7, time: "4PM - 6PM"},
+		{id: 8, time: "6PM - 8PM"},
+		{id: 9, time: "8PM - 10PM"},
+		{id: 10, time: "10PM - 12PM"},
 	];
 	const [isChecked, setChecked] = useState(new Array(timeData.length).fill(false));
-	function toCheck (timeItem: timeObj) {
-		setChecked(isChecked.map((e, idx) => (idx === timeItem.id ? !e : e)));
-	}
+	function toCheck (timeItem: timeObj) {setChecked(isChecked.map((e, idx) => (idx === timeItem.id ? !e : e)));}
 
   // ImagePicker -----------------------------
   const [image, setImage] = useState<string | null>(null);
@@ -191,15 +151,8 @@ export default function Form() {
 			aspect: [4, 3],
 			quality: 1,
 		});
-
-		if (!result.canceled) {
-			setImage(result.assets[0].uri);
-		}
+		if (!result.canceled) setImage(result.assets[0].uri);
   };
-
-  
-  const [selectedId, setSelectedId] = useState<string | undefined>();
-  const [textInputValue, setTextInputValue] = useState('');
 
   return (
 		<SafeAreaView style={styles.container}>
@@ -219,14 +172,11 @@ export default function Form() {
 					</Text>
 					<View style={{ paddingLeft: 30, alignSelf: "flex-start" }}>
 						<RadioGroup
-							containerStyle={{
-								alignItems: "flex-start",
-								flexDirection: "row",
-							}}
+							containerStyle={{ alignItems: "flex-start", flexDirection: "row"}}
 							radioButtons={flyIdentify}
-							onPress={setSelectedId}
-							selectedId={selectedId}
-						/>
+							onPress={setSelectedFlyIdentify}
+							selectedId={selectedFlyIdentify}>
+						</RadioGroup>
 					</View>
 				</View>
 				<View style={styles.questionCard}>
@@ -236,11 +186,11 @@ export default function Form() {
 					<View style={{ flexDirection: "row", alignItems: "flex-start" }}>
 						<Text style={{ fontSize: 30 }}>📅</Text>
 						<DateTimePicker
-							value={new Date()}
-							mode='date'
-							display='default'
-							is24Hour={true}
-						/>
+							value={selectedDate}
+							mode="date"
+							display="default"
+							onChange={onDateChange}
+							is24Hour={true}/>
 					</View>
 				</View>
 				<View style={styles.questionCard}>
@@ -250,9 +200,9 @@ export default function Form() {
 					<RadioGroup
 						containerStyle={styles.radioButtons}
 						radioButtons={locationType}
-						onPress={setSelectedId}
-						selectedId={selectedId}
-					/>
+						onPress={setSelectedLocationType}
+						selectedId={selectedLocationType}>
+					</RadioGroup>
 				</View>
 				<View style={styles.questionCard}>
 					<Text style={styles.text}>
@@ -260,11 +210,12 @@ export default function Form() {
 						address where you saw the flies.
 					</Text>
 					<View style={{ flexDirection: "row", alignItems: "center" }}>
-						<TextInput style={{ fontSize: 20 }}>🏡</TextInput>
+						<Text style={{ fontSize: 20 }}>🏡</Text>
 						<TextInput
 							style={styles.nameAddressInput}
-							placeholder='Name / Address'
-						/>
+							placeholder="Name / Address"
+							value={address}
+							onChangeText={setAddress}/>
 					</View>
 				</View>
 				<View style={styles.questionCard}>
@@ -272,12 +223,33 @@ export default function Form() {
 						Please select the geographical coordinates of the location where you
 						saw the flies.
 					</Text>
-					<View style={{ flexDirection: "row", alignItems: "center" }}>
-						<TextInput style={{ fontSize: 20 }}>📍</TextInput>
-						<TextInput
-							style={styles.nameAddressInput}
-							placeholder='Name / Address'
-						/>
+					<Text style={styles.subtext}>
+						Tap "Locate Me" to get your current location, or select location manually on the map.
+					</Text>
+					<View style={{ flexDirection: "column", alignItems: "center" }}>
+						<MapView
+							style={styles.map}
+							showsUserLocation={true}
+							onPress={handleMapPress}
+							initialRegion={{
+								latitude: location.latitude,
+								longitude: location.longitude,
+								latitudeDelta: 0.0922,
+								longitudeDelta: 0.0421,
+							}}>
+							<Marker coordinate={location} />
+						</MapView>
+						<TouchableOpacity style={styles.locateButton} onPress={handleLocateMe}>
+							<Text style={styles.buttonText}>Locate Me</Text>
+						</TouchableOpacity>
+						<View style={{ flexDirection: "row", alignItems: "center" }}>
+							<Text style={{ fontSize: 20 }}>📍</Text> 
+							<TextInput
+								style={styles.nameAddressInput}
+								placeholder="Coordinates"
+								value={coordsText}
+								editable={false}/>
+						</View>
 					</View>
 				</View>
 				<View style={styles.questionCard}>
@@ -301,7 +273,7 @@ export default function Form() {
 						you saw them.
 					</Text>
 					{timeData.map((timeItem) => (
-						<View style={styles.checkItem}>
+						<View key={timeItem.id} style={styles.checkItem}>
 							<Checkbox
 								onValueChange={() => toCheck(timeItem)}
 								value={isChecked.at(timeItem.id)}
@@ -336,11 +308,8 @@ export default function Form() {
 					style={[
 						styles.button,
 						{ alignSelf: "center", width: "100%", backgroundColor: "#FFE7C3" },
-					]}
-				>
-					<Text style={[styles.buttonText, { color: "#1E314F" }]}>
-						Submit Form
-					</Text>
+					]}>
+					<Text style={[styles.buttonText, { color: "#1E314F" }]}>Submit Form</Text>
 				</TouchableOpacity>
 			</ScrollView>
 		</SafeAreaView>
@@ -409,6 +378,11 @@ const styles = StyleSheet.create({
 		width: 250,
 		color: "black",
 	},
+	map: {
+		width: 275,
+		height: 190,
+		marginBottom: 10,
+	},
 	flowerCard: {
 		width: "45%",
 		margin: 5,
@@ -432,6 +406,7 @@ const styles = StyleSheet.create({
 		width: 270,
 		height: 100,
 		color: "black",
+		fontSize: 18,
 	},
 	button: {
 		width: 270,
@@ -440,6 +415,13 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		borderRadius: 10,
 		backgroundColor: "#508991",
+	},
+	locateButton: {
+		backgroundColor: '#508991',
+		padding: 10,
+		borderRadius: 10,
+		marginBottom: 10,
+		alignItems: 'center',
 	},
 	buttonText: {
 		color: "#FEFEFE",
