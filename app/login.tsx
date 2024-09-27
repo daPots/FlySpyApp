@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { firebaseAuth } from '@/firebaseConfig';
 import { FirebaseError } from '@firebase/util';
-import{ signInWithEmailAndPassword, createUserWithEmailAndPassword} from "firebase/auth";
+
+
+import {
+	signInWithEmailAndPassword,
+	createUserWithEmailAndPassword,
+	getAuth,
+	sendPasswordResetEmail,
+	Auth,
+} from "firebase/auth";
 import { router } from 'expo-router';
 import { FontAwesome5, FontAwesome } from "@expo/vector-icons";
-
-
-
+const auth = firebaseAuth;
 
 function authCodeToMessage(errorCode:String) {
 	switch (errorCode) {
@@ -22,112 +29,161 @@ function authCodeToMessage(errorCode:String) {
 	}
 }
 
+function resetPassword(auth: Auth, email: string) {
+	try {
+		sendPasswordResetEmail(auth, email);
+		alert("Check your email!");
+	}
+	catch (error) {
+		console.log("error");
+	}
+	
+}
+
 export default function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [name, setName] = useState('');
 	const [isLogin, setLogin] = useState(true);
+	const [hidePassword, setHidePassword] = useState(true);
+	const [loading, setLoading] = useState(false);
+	
+	const signIn = async () => {
+		setLoading(true);
+		try {
+			if (isLogin) {
+				await signInWithEmailAndPassword(auth, email, password);
+				router.push('/home');
+			}
+			else {
+				await createUserWithEmailAndPassword(auth, email, password);
+				router.push('/home');
+			}
+		} catch (error: unknown) {
+			if (error instanceof FirebaseError) {
+				alert(authCodeToMessage(error.code));
+			}
+		} finally {
+			setLoading(false);
+		}
+	}
 
-  const [loading, setLoading] = useState(false);
-  const auth = firebaseAuth;
 
-  const signIn = async () => {
-    setLoading(true); 
-	  try {
-		  if (isLogin) {
-			  await signInWithEmailAndPassword(auth, email, password);
-			  router.push('/home');
-		  }
-		  else {
-			  await createUserWithEmailAndPassword(auth, email, password);
-			  router.push('/home');
-		  }
-	  } catch (error: unknown) {
-		  if (error instanceof FirebaseError) {
-			  alert(authCodeToMessage(error.code));
-		  }
-	  }finally {
-        setLoading(false);
-      }  
-  }
+	return (
+		<KeyboardAvoidingView style={styles.container} behavior= "height">
+			<SafeAreaView edges={["top"]} style={styles.container}>
+				<View style={styles.navigationContainer}>
+					<FontAwesome
+						name='arrow-left'
+						style={styles.navigationIcon}
+						onPress={() => router.push("/")}
+					/>
+				</View>
+				<View style={styles.formContainer}>
+					<Text style={styles.title}>{isLogin ? "Log In" : "Sign Up"}</Text>
+					{isLogin ? null : (
+						<View style={styles.inputContainer}>
+							<FontAwesome5 name='user-alt' style={styles.inputIcon} />
 
-
-  return (
-		<View style={styles.container}>
-			<View style={styles.formContainer}>
-				<Text style={styles.title}>{isLogin ? "Log In" : "Sign Up"}</Text>
-				{isLogin ? null : (
+							<TextInput
+								value={name}
+								style={styles.input}
+								placeholder='Name'
+								onChangeText={setName}
+							></TextInput>
+						</View>
+					)}
 					<View style={styles.inputContainer}>
-						<FontAwesome5 name='user-alt' style={styles.inputIcon} />
-
+						<FontAwesome name='envelope' style={styles.inputIcon} />
 						<TextInput
-							value={name}
+							value={email}
 							style={styles.input}
-							placeholder='Name'
-							onChangeText={setName}
+							placeholder='Email'
+							autoCapitalize='none'
+							onChangeText={setEmail}
 						></TextInput>
 					</View>
-				)}
-				<View style={styles.inputContainer}>
-					<FontAwesome name='envelope' style={styles.inputIcon} />
-					<TextInput
-						value={email}
-						style={styles.input}
-						placeholder='Email'
-						autoCapitalize='none'
-						onChangeText={setEmail}
-					></TextInput>
-				</View>
-				<View style={styles.inputContainer}>
-					<FontAwesome5 name='lock' style={styles.inputIcon} />
-					<TextInput
-						secureTextEntry={true}
-						value={password}
-						style={styles.input}
-						placeholder='Password'
-						autoCapitalize='none'
-						onChangeText={setPassword}
-					></TextInput>
-				</View>
-
-				<TouchableOpacity style={styles.button} onPress={signIn}>
-					<Text style={styles.text}>{isLogin ? "Log In" : "Sign Up"}</Text>
-				</TouchableOpacity>
-				<Text style={styles.smallText}>
-					Don't have an account?
+					<View style={styles.inputContainer}>
+						<FontAwesome5 name='lock' style={styles.inputIcon} />
+						<TextInput
+							secureTextEntry={hidePassword}
+							value={password}
+							style={styles.input}
+							placeholder='Password'
+							autoCapitalize='none'
+							onChangeText={setPassword}
+						></TextInput>
+						<TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
+							<FontAwesome name='eye-slash' style={styles.inputIcon} />
+						</TouchableOpacity>
+					</View>
 					<TouchableOpacity
-						style={styles.textLink}
-						onPress={() => setLogin(!isLogin)}
+						style={{ width: "100%" }}
+						onPress={() => resetPassword(auth, email)}
 					>
-						<Text style={[styles.smallText, { color: "#508991" }]}>
-							{isLogin ? "Sign Up" : "Log In"}
+						<Text
+							style={{
+								color: "#508991",
+								textAlign: "right",
+								fontWeight: "bold",
+							}}
+						>
+							{" "}
+							Forgot your password?
 						</Text>
 					</TouchableOpacity>
-				</Text>
-			</View>
-		</View>
+
+					<TouchableOpacity style={styles.button} onPress={signIn}>
+						<Text style={styles.text}>{isLogin ? "Log In" : "Sign Up"}</Text>
+					</TouchableOpacity>
+					<View style={styles.textRow}>
+						<Text>Don't have an account?</Text>
+						<TouchableOpacity onPress={() => setLogin(!isLogin)}>
+							<Text style={[styles.smallText, { color: "#508991" }]}>
+								{isLogin ? "Sign Up" : "Log In"}
+							</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+			</SafeAreaView>
+		</KeyboardAvoidingView>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#B2CEBD",
-		justifyContent: "flex-end",
+		backgroundColor: "#C2DCCC",
+		justifyContent: "space-between",
 	},
 	formContainer: {
-		height: "70%",
 		width: "100%",
 		paddingHorizontal: "10%",
+		paddingVertical: "15%",
 		alignItems: "center",
 		justifyContent: "center",
 		backgroundColor: "#FEFEFE",
-		borderRadius: 30,
+		borderTopLeftRadius: 30,
+		borderTopRightRadius: 30,
 		gap: 30,
 	},
 	input: {
-		width: "80%",
+		flex: 1,
 		fontSize: 18,
+	},
+	inputIcon: {
+		color: "#1E314F",
+		fontSize: 18,
+	},
+	inputContainer: {
+		flexDirection: "row",
+		width: "100%",
+		alignItems: "center",
+		gap: 10,
+		borderRadius: 30,
+		backgroundColor: "#F3F5F4",
+		height: 50,
+		paddingHorizontal: 20,
 	},
 	button: {
 		backgroundColor: "#FFE7C3",
@@ -137,8 +193,10 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 	},
-	textLink: {
-		alignContent: "flex-end",
+	textRow: {
+		justifyContent: "center",
+		flexDirection: "row",
+		height: 20,
 	},
 	text: {
 		color: "#1E314F",
@@ -154,23 +212,16 @@ const styles = StyleSheet.create({
 	},
 	smallText: {
 		color: "#1E314F",
-		fontFamily: "NunitoSansNormal",
-		fontSize: 12,
+		fontWeight: "bold",
 		justifyContent: "center",
+		marginLeft: 10,
 	},
-	inputIcon: {
+	navigationIcon: {
 		color: "#1E314F",
-		fontSize: 18,
+		fontSize: 40,
 	},
-	inputContainer: {
-		flexDirection: "row",
+	navigationContainer: {
 		width: "100%",
-		justifyContent: "center",
-		alignItems: "center",
-		gap: 10,
-		borderRadius: 30,
-		backgroundColor: "#F3F5F4",
-		height: 50,
-		paddingHorizontal: 5,
+		paddingHorizontal: "5%",
 	},
 });

@@ -76,7 +76,7 @@ export default function Home() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#B2CEBD",
+		backgroundColor: "#C2DCCC",
 		alignItems: "center",
 		justifyContent: "center",
 	},
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
 		flex: 2,
 	},
 	smallWidget: {
-		backgroundColor: "#FEFEFE", 
+		backgroundColor: "#FEFEFE",
 		justifyContent: "space-around",
 		alignItems: "flex-end",
 		width: "48%",
