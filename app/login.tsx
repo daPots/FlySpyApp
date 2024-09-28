@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { firebaseAuth } from '@/firebaseConfig';
+import { auth } from '@/firebaseConfig';
 import { FirebaseError } from '@firebase/util';
 
 
@@ -12,11 +12,12 @@ import {
 	sendPasswordResetEmail,
 	Auth,
 } from "firebase/auth";
+
 import { router } from 'expo-router';
 import { FontAwesome5, FontAwesome } from "@expo/vector-icons";
-const auth = firebaseAuth;
 
-function authCodeToMessage(errorCode:String) {
+
+function authCodeToMessage(errorCode: String) {
 	switch (errorCode) {
 		case "auth/email-already-in-use":
 			return "Email already in use";

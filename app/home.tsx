@@ -76,7 +76,7 @@ export default function Home() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#C2DCCC",
+		backgroundColor: "#ECECEC",
 		alignItems: "center",
 		justifyContent: "center",
 	},
@@ -104,6 +104,14 @@ const styles = StyleSheet.create({
 		height: "100%",
 		padding: 20,
 		borderRadius: 30,
+
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.3,
+		shadowRadius: 3,
+
+		// Shadow for Android
+		elevation: 8,
 	},
 	newFormButton: {
 		backgroundColor: "#FFE7C3",
@@ -120,6 +128,14 @@ const styles = StyleSheet.create({
 		width: "100%",
 		borderRadius: 30,
 		padding: 20,
+
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.3,
+		shadowRadius: 3,
+
+		// Shadow for Android
+		elevation: 8,
 	},
 	videosWidget: {
 		backgroundColor: "#FEFEFE",
@@ -128,6 +144,14 @@ const styles = StyleSheet.create({
 		borderRadius: 30,
 		padding: 20,
 		justifyContent: "space-between",
+
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.3,
+		shadowRadius: 3,
+
+		// Shadow for Android
+		elevation: 5,
 	},
 	vidContainer: {
 		flexDirection: "row",

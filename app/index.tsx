@@ -18,7 +18,7 @@ export default function Index() {
 			<View style={styles.indexContainer}>
 				<View style={styles.logoContainer}>
 					<Image
-						source={require("../assets/images/flyspylogo.png")}
+						source={require("../assets/images/FlySpyLogo.png")}
 						style={styles.logo}
 					/>
 					<Text style={styles.title}>FlySpy</Text>
@@ -45,10 +45,9 @@ export default function Index() {
 					</TouchableOpacity>
 					<View style={styles.textRow}>
 						<Text style={styles.text}>Don't want to create an account?</Text>
-						<TouchableOpacity onPress={() => "home"}>
+						<TouchableOpacity onPress={() => router.push('/home')}>
 							<Text style={{ color: "#508991", fontWeight: "bold" }}>
-								{" "}
-								Sign in as guest{" "}
+								Sign in as guest
 							</Text>
 						</TouchableOpacity>
 					</View>
@@ -63,7 +62,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: "#C2DCCC",
 		alignItems: "center",
-		justifyContent: "space-between",
+		justifyContent: "center",
 	},
 	title: {
 		fontSize: 70,
@@ -78,8 +77,8 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	logo: {
-		width: 80,
-		height: 80,
+		width: 70,
+		height: 70,
 	},
 	description: {
 		fontSize: 20,
@@ -106,12 +105,12 @@ const styles = StyleSheet.create({
 
 		// Shadow for iOS
 		shadowColor: "#000",
-		shadowOffset: { width: 0, height: 4 },
+		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.3,
-		shadowRadius: 4,
+		shadowRadius: 3,
 
 		// Shadow for Android
-		elevation: 8,
+		elevation: 5,
 	},
 	langButtonText: {
 		color: "#508991",
@@ -128,12 +127,12 @@ const styles = StyleSheet.create({
 
 		// Shadow for iOS
 		shadowColor: "#000",
-		shadowOffset: { width: 0, height: 4 },
+		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.3,
-		shadowRadius: 4,
+		shadowRadius: 3,
 
 		// Shadow for Android
-		elevation: 8,
+		elevation: 5,
 	},
 	beginButtonText: {
 		color: "#1E314F",
@@ -152,6 +151,5 @@ const styles = StyleSheet.create({
 	},
 	indexContainer: {
 		width: "80%",
-		paddingVertical: "10%",
 	},
 });
