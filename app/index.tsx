@@ -36,7 +36,7 @@ export default function Index() {
 						<Text style={styles.langButtonText}>中文</Text>
 					</TouchableOpacity>
 				</View>
-				<View style={{ gap: 20, width: "100%" }}>
+				<View style={{ gap: 15, width: "100%" }}>
 					<TouchableOpacity
 						style={styles.beginButton}
 						onPress={() => router.push("/login")}
@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
 		backgroundColor: "#C2DCCC",
 		alignItems: "center",
 		justifyContent: "center",
+		gap: 15,
 	},
 	title: {
 		fontSize: 70,
@@ -81,11 +82,10 @@ const styles = StyleSheet.create({
 		height: 70,
 	},
 	description: {
-		fontSize: 20,
-		color: "#000000",
+		fontSize: 17,
+		color: "#1E314F",
 		textAlign: "center",
 		width: "100%",
-		marginBottom: 30,
 		fontWeight: "bold",
 		fontFamily: "NunitoSansBold",
 	},
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-between",
 		width: "100%",
-		marginBottom: 30,
+		marginBottom: 20,
 	},
 	langButton: {
 		backgroundColor: "#FEFEFE",
@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
 	},
 	langButtonText: {
 		color: "#508991",
+		fontSize: 17,
 		fontWeight: "bold",
 		fontFamily: "NunitoSansBold",
 	},

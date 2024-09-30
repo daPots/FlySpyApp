@@ -106,18 +106,22 @@ export default function Form() {
 			<TouchableOpacity
 				style={[
 					styles.flowerCard,
-					item.id == selectedFlower ? { borderColor: color } : undefined,
+					item.id == selectedFlower
+						? { borderColor: color, borderWidth: 2, backgroundColor: "#50899140" }
+						: undefined,
 				]}
 				onPress={() => {
 					setSelectedFlower(item.id);
 					console.log(item.id);
-				}}>
+				}}
+			>
 				<Text
 					style={[
 						styles.text,
 						{ width: "100%" },
-						item.id == selectedFlower ? { color: color } : {},
-					]}>
+						item.id == selectedFlower ? { color: color, fontFamily: 'NunitoSansBold' } : {},
+					]}
+				>
 					{item.flowerName} ({item.flowerGenus})
 				</Text>
 				<Image style={styles.flowerImg} source={item.flowerImg} />

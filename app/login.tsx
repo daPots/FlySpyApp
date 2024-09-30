@@ -9,13 +9,13 @@ import {
 	signInWithEmailAndPassword,
 	createUserWithEmailAndPassword,
 	getAuth,
+	updateProfile,
 	sendPasswordResetEmail,
 	Auth,
 } from "firebase/auth";
 
 import { router } from 'expo-router';
 import { FontAwesome5, FontAwesome } from "@expo/vector-icons";
-
 
 function authCodeToMessage(errorCode: String) {
 	switch (errorCode) {
@@ -40,6 +40,7 @@ function resetPassword(auth: Auth, email: string) {
 	}
 	
 }
+
 
 export default function Login() {
 	const [email, setEmail] = useState('');
@@ -174,7 +175,7 @@ const styles = StyleSheet.create({
 	},
 	inputIcon: {
 		color: "#1E314F",
-		fontSize: 18,
+		fontSize: 17,
 	},
 	inputContainer: {
 		flexDirection: "row",
@@ -202,12 +203,12 @@ const styles = StyleSheet.create({
 	text: {
 		color: "#1E314F",
 		fontFamily: "NunitoSansBold",
-		fontSize: 20,
+		fontSize: 17,
 	},
 	title: {
 		width: "100%",
 		textAlign: "left",
-		fontSize: 50,
+		fontSize: 40,
 		color: "#508991",
 		fontWeight: "800",
 	},
