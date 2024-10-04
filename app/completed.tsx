@@ -1,32 +1,36 @@
 import React from 'react';
 import { router } from 'expo-router';
 import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import LanguageToggleButton from './langToggle';
 
 export default function Completed() {
-  return (
-    <View style={styles.container}>
-        <View style={styles.titleContainer}>
-            <Image source={require('../assets/images/logo.png')} style={styles.logo}/>
-            <Text style={styles.title}>FlySpy</Text>
-        </View>
-        <View style={styles.confirmationContainer}>
-            <Text style={styles.confirmationText}>Form Submitted!</Text>
-            <Text style={styles.confirmationSubText}>Thank you for participating in the Taiwan Wing-Spot Fly Project!</Text>
-            <Text style={styles.subscriptionText}>Would you like to receive email updates on our project?</Text>
-            <View style={styles.confirmationButtonContainer}>
-                <TouchableOpacity style={styles.yesConfirmationButton}>
-                    <Text style={styles.yesConfirmationButtonText}>Yes</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.noConfirmationButton}>
-                    <Text style={styles.noConfirmationButtonText}>No</Text>
+    const { t, i18n } = useTranslation();
+    return (
+        <View style={styles.container}>
+            <View style={{marginTop: 75}}><LanguageToggleButton /></View>
+            <View style={styles.titleContainer}>
+                <Image source={require('../assets/images/logo.png')} style={styles.logo}/>
+                <Text style={styles.title}>FlySpy</Text>
+            </View>
+            <View style={styles.confirmationContainer}>
+                <Text style={styles.confirmationText}>{t("formSubmitted")}</Text>
+                <Text style={styles.confirmationSubText}>{t("thankYou")}</Text>
+                <Text style={styles.subscriptionText}>{t("updates?")}</Text>
+                <View style={styles.confirmationButtonContainer}>
+                    <TouchableOpacity style={styles.yesConfirmationButton}>
+                        <Text style={styles.yesConfirmationButtonText}>{t("Yes")}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.noConfirmationButton}>
+                        <Text style={styles.noConfirmationButtonText}>{t("No")}</Text>
+                    </TouchableOpacity>
+                </View>
+                <TouchableOpacity style={styles.beginButton} onPress={() => router.push('/home')}>
+                    <Text style={styles.beginButtonText}>{t("returnHome")}</Text>
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.beginButton} onPress={() => router.push('/home')}>
-                <Text style={styles.beginButtonText}>Return to Home</Text>
-            </TouchableOpacity>
         </View>
-    </View>
-  );
+    );
 }
 
 const styles = StyleSheet.create({
@@ -40,7 +44,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 20,
         alignContent: 'center',
-        marginTop: 100,
         marginBottom: 30,
         alignItems: 'center',
     },

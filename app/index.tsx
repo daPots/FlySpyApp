@@ -3,8 +3,11 @@ import { router } from "expo-router";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useFonts } from "expo-font";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTranslation } from 'react-i18next';
 
 export default function Index() {
+	const { t, i18n } = useTranslation();
+
 	const [fontsLoaded] = useFonts({
 		NunitoSansRegular: require("../assets/fonts/NunitoSansRegular.ttf"),
 		NunitoSansMedium: require("../assets/fonts/NunitoSansMedium.ttf"),
@@ -13,41 +16,39 @@ export default function Index() {
 	});
 	if (!fontsLoaded) return <Text>Loading...</Text>;
 
+	const changeLanguage = (language: string) => {
+		i18n.changeLanguage(language);
+	  };
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<View style={styles.indexContainer}>
 				<View style={styles.logoContainer}>
 					<Image
-						source={require("../assets/images/FlySpyLogo.png")}
-						style={styles.logo}
-					/>
+						source={require("../assets/images/flyspylogo.png")}
+						style={styles.logo}/>
 					<Text style={styles.title}>FlySpy</Text>
 				</View>
-				<Text style={styles.description}>
-					Contribute to the Taiwan Wing-Spot Fly Project!
-				</Text>
+				<Text style={styles.description}>{t("description")}</Text>
 			</View>
 			<View style={styles.indexContainer}>
 				<View style={styles.languageContainer}>
-					<TouchableOpacity style={styles.langButton}>
+					<TouchableOpacity style={styles.langButton} onPress={() => changeLanguage('en')}>
 						<Text style={styles.langButtonText}>English</Text>
 					</TouchableOpacity>
-					<TouchableOpacity style={styles.langButton}>
+					<TouchableOpacity style={styles.langButton} onPress={() => changeLanguage('zh')}>
 						<Text style={styles.langButtonText}>中文</Text>
 					</TouchableOpacity>
 				</View>
 				<View style={{ gap: 15, width: "100%" }}>
-					<TouchableOpacity
-						style={styles.beginButton}
-						onPress={() => router.push("/login")}
-					>
-						<Text style={styles.beginButtonText}>Log In / Register</Text>
+					<TouchableOpacity style={styles.beginButton} onPress={() => router.push("/login")}>
+						<Text style={styles.beginButtonText}>{t("loginRegister")}</Text>
 					</TouchableOpacity>
 					<View style={styles.textRow}>
-						<Text style={styles.text}>Don't want to create an account?</Text>
+						<Text style={styles.text}>{t("guestPrompt")}</Text>
 						<TouchableOpacity onPress={() => router.push('/home')}>
 							<Text style={{ color: "#508991", fontWeight: "bold" }}>
-								Sign in as guest
+								{t("signInAsGuest")}
 							</Text>
 						</TouchableOpacity>
 					</View>

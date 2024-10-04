@@ -4,8 +4,12 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-nati
 import { Video, ResizeMode } from "expo-av";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { useTranslation } from 'react-i18next';
+import LanguageToggleButton from './langToggle';
 
 export default function Home() {
+	const { t, i18n } = useTranslation();
+
 	const [expand, setExpand] = React.useState(false); 
 	const scrollRef = useRef<ScrollView | null>(null);
 
@@ -20,30 +24,29 @@ export default function Home() {
 	return (
 		<ScrollView
 			style={styles.container}
-			contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
-		>
+			contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}>
 			<SafeAreaView>
+				<LanguageToggleButton />
 				<View style={styles.widgetContainer}>
-					<Text style={styles.largeTitle}>Welcome, GuestUser!</Text>
+					<Text style={styles.largeTitle}>{t("welcomeUser")}GuestUser!</Text>
 					<View style={styles.smallWidgetContainer}>
 						<View style={styles.smallWidget}>
 							<Text style={[styles.largeTitle, { color: "#508991" }]}>4</Text>
-							<Text style={styles.title3}>Submissions</Text>
+							<Text style={styles.title3}>{t("submissions")}</Text>
 						</View>
 						<View style={[styles.smallWidget, { backgroundColor: "#1E314F" }]}>
 							<TouchableOpacity
 								style={styles.newFormButton}
-								onPress={() => router.push("/form")}
-							>
+								onPress={() => router.push("/form")}>
 								<Text style={[styles.largeTitle, { color: "#1E314F" }]}>+</Text>
 							</TouchableOpacity>
 							<Text style={[styles.title3, { color: "#FEFEFE" }]}>
-								New Form
+								{t("newForm")}
 							</Text>
 						</View>
 					</View>
 					<View style={styles.videosWidget}>
-						<Text style={styles.title}>Video Gallery</Text>
+						<Text style={styles.title}>{t("videoGallery")}</Text>
 						<ScrollView style={styles.vidContainer} horizontal>
 							<Video
 								style={[styles.video, { marginRight: 10 }]}
@@ -64,33 +67,14 @@ export default function Home() {
 					<View style={styles.missionWidget}>
 						<TouchableOpacity
 							style={styles.preview}
-							onPress={() => expandFunc()}
-						>
-							<Text style={styles.title}>Our Mission</Text>
+							onPress={() => expandFunc()}>
+							<Text style={styles.title}>{t("ourMission")}</Text>
 							<FontAwesome5
 								name={expand ? "caret-up" : "caret-down"}
 								style={styles.title}
 							/>
 						</TouchableOpacity>
-						{expand && (
-							<Text style={styles.text}>
-								FlySpy is a Citizen Science project jointly run as a
-								collaboration among researchers at Stony Brook University (Dr.
-								John True), National Taiwan University (Dr. Chau-Ti Ting),
-								National Central University (Taiwan; Dr. Shu-Dan Yeh), and
-								Academia Sinica (Dr. Shu Fang). The project aims to inform
-								members of the public on urban ecology and involve them in data
-								collecting on Drosophila elegans, a species with a unique
-								flower-breeding ecology that is found in many sites throughout
-								Taiwan, most of which have been subject to anthropogenic
-								disturbances. Through collecting detailed spatial and temporal
-								information on the flower breeding sites of this species, this
-								project will allow us to develop D. elegans as a model species
-								for urban ecology, which will provide insights on how insects
-								respond to ecological disturbances, introduced and invasive
-								plants, and climate change.
-							</Text>
-						)}
+						{expand && (<Text style={styles.text}>{t("missionStatement")}</Text>)}
 					</View>
 			</View>
 			</SafeAreaView>
@@ -107,7 +91,6 @@ const styles = StyleSheet.create({
 		rowGap: 20,
 		width: "100%",
 		padding: 25,
-		marginVertical: 20,
 	},
 	smallWidgetContainer: {
 		flexDirection: "row",
