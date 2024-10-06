@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingVi
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { auth } from '@/firebaseConfig';
 import { FirebaseError } from '@firebase/util';
+import stylesDefault from './styles';
 
 
 import {
@@ -72,17 +73,28 @@ export default function Login() {
 
 
 	return (
-		<KeyboardAvoidingView style={styles.container} behavior= "height">
+		<KeyboardAvoidingView style={styles.container} behavior='height'>
 			<SafeAreaView edges={["top"]} style={styles.container}>
 				<View style={styles.navigationContainer}>
 					<FontAwesome
 						name='arrow-left'
-						style={styles.navigationIcon}
+						style={stylesDefault.navigationIcon}
 						onPress={() => router.push("/")}
 					/>
 				</View>
 				<View style={styles.formContainer}>
-					<Text style={styles.title}>{isLogin ? "Log In" : "Sign Up"}</Text>
+					<Text
+						style={[
+							stylesDefault.largeText,
+							{
+								width: "100%",
+								textAlign: "left",
+								color: "#508991",
+							},
+						]}
+					>
+						{isLogin ? "Log In" : "Sign Up"}
+					</Text>
 					{isLogin ? null : (
 						<View style={styles.inputContainer}>
 							<FontAwesome5 name='user-alt' style={styles.inputIcon} />
@@ -135,13 +147,31 @@ export default function Login() {
 						</Text>
 					</TouchableOpacity>
 
-					<TouchableOpacity style={styles.button} onPress={signIn}>
-						<Text style={styles.text}>{isLogin ? "Log In" : "Sign Up"}</Text>
+					<TouchableOpacity
+						style={[
+							stylesDefault.button,
+							{ height: 50, width: "100%", shadowOpacity: 0 },
+						]}
+						onPress={signIn}
+					>
+						<Text
+							style={[
+								stylesDefault.text,
+								{ color: "#1E314F", fontFamily: "NunitoSansBold" },
+							]}
+						>
+							{isLogin ? "Log In" : "Sign Up"}
+						</Text>
 					</TouchableOpacity>
 					<View style={styles.textRow}>
 						<Text>Don't have an account?</Text>
 						<TouchableOpacity onPress={() => setLogin(!isLogin)}>
-							<Text style={[styles.smallText, { color: "#508991" }]}>
+							<Text
+								style={[
+									stylesDefault.subText,
+									{ color: "#508991", fontFamily: "NunitoSansExtraBold" },
+								]}
+							>
 								{isLogin ? "Sign Up" : "Log In"}
 							</Text>
 						</TouchableOpacity>
@@ -187,40 +217,12 @@ const styles = StyleSheet.create({
 		height: 50,
 		paddingHorizontal: 20,
 	},
-	button: {
-		backgroundColor: "#FFE7C3",
-		height: 50,
-		width: "100%",
-		borderRadius: 15,
-		justifyContent: "center",
-		alignItems: "center",
-	},
 	textRow: {
 		justifyContent: "center",
+		alignItems: "center",
 		flexDirection: "row",
-		height: 20,
-	},
-	text: {
-		color: "#1E314F",
-		fontFamily: "NunitoSansBold",
-		fontSize: 17,
-	},
-	title: {
-		width: "100%",
-		textAlign: "left",
-		fontSize: 40,
-		color: "#508991",
-		fontWeight: "800",
-	},
-	smallText: {
-		color: "#1E314F",
-		fontWeight: "bold",
-		justifyContent: "center",
-		marginLeft: 10,
-	},
-	navigationIcon: {
-		color: "#1E314F",
-		fontSize: 40,
+		height: 30,
+		gap: 5,
 	},
 	navigationContainer: {
 		width: "100%",

@@ -14,16 +14,15 @@ const LanguageToggleButton: React.FC = () => {
   };
 
   return (
-    <TouchableOpacity style={styles.button} onPress={toggleLanguage}>
-      <FontAwesome6 name={'language'} size={50} color="#4CAF50" />
-    </TouchableOpacity>
-  );
+		<TouchableOpacity style={styles.button} onPress={toggleLanguage}>
+			<FontAwesome6 name={"language"} size={40} color='#508991' />
+		</TouchableOpacity>
+	);
 };
 
 const styles = StyleSheet.create({
 	button: {
-        marginTop: 10,
-		alignSelf: 'center',
+    alignSelf: 'flex-end',
 	},
 });
 

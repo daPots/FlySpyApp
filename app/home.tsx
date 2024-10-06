@@ -7,6 +7,8 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { useTranslation } from 'react-i18next';
 import LanguageToggleButton from './langToggle';
 
+import stylesDefault from "./styles";
+
 export default function Home() {
 	const { t, i18n } = useTranslation();
 
@@ -25,28 +27,28 @@ export default function Home() {
 		<ScrollView
 			style={styles.container}
 			contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}>
-			<SafeAreaView>
-				<LanguageToggleButton />
+			<SafeAreaView style={{ paddingHorizontal: 25 } }>
+				<LanguageToggleButton/>
 				<View style={styles.widgetContainer}>
-					<Text style={styles.largeTitle}>{t("welcomeUser")}GuestUser!</Text>
+					<Text style={stylesDefault.largeText}>{t("welcomeUser")}GuestUser!</Text>
 					<View style={styles.smallWidgetContainer}>
 						<View style={styles.smallWidget}>
-							<Text style={[styles.largeTitle, { color: "#508991" }]}>4</Text>
-							<Text style={styles.title3}>{t("submissions")}</Text>
+							<Text style={[stylesDefault.largeText, { color: "#508991" }]}>4</Text>
+							<Text style={stylesDefault.title3}>{t("submissions")}</Text>
 						</View>
 						<View style={[styles.smallWidget, { backgroundColor: "#1E314F" }]}>
 							<TouchableOpacity
 								style={styles.newFormButton}
 								onPress={() => router.push("/form")}>
-								<Text style={[styles.largeTitle, { color: "#1E314F" }]}>+</Text>
+								<Text style={[stylesDefault.largeText, { color: "#1E314F" }]}>+</Text>
 							</TouchableOpacity>
-							<Text style={[styles.title3, { color: "#FEFEFE" }]}>
+							<Text style={[stylesDefault.title3, { color: "#FEFEFE" }]}>
 								{t("newForm")}
 							</Text>
 						</View>
 					</View>
 					<View style={styles.videosWidget}>
-						<Text style={styles.title}>{t("videoGallery")}</Text>
+						<Text style={stylesDefault.title}>{t("videoGallery")}</Text>
 						<ScrollView style={styles.vidContainer} horizontal>
 							<Video
 								style={[styles.video, { marginRight: 10 }]}
@@ -68,15 +70,15 @@ export default function Home() {
 						<TouchableOpacity
 							style={styles.preview}
 							onPress={() => expandFunc()}>
-							<Text style={styles.title}>{t("ourMission")}</Text>
+							<Text style={stylesDefault.title}>{t("ourMission")}</Text>
 							<FontAwesome5
 								name={expand ? "caret-up" : "caret-down"}
-								style={styles.title}
+								style={stylesDefault.title}
 							/>
 						</TouchableOpacity>
-						{expand && (<Text style={styles.text}>{t("missionStatement")}</Text>)}
+						{expand && (<Text style={stylesDefault.text}>{t("missionStatement")}</Text>)}
 					</View>
-			</View>
+				</View>
 			</SafeAreaView>
 		</ScrollView>
 	);
@@ -90,7 +92,6 @@ const styles = StyleSheet.create({
 		justifyContent: "flex-end",
 		rowGap: 20,
 		width: "100%",
-		padding: 25,
 	},
 	smallWidgetContainer: {
 		flexDirection: "row",
@@ -164,25 +165,6 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		flex: 1,
 		rowGap: 20,
-	},
-	largeTitle: {
-		fontSize: 40,
-		color: "#1E314F",
-		fontWeight: "800",
-	},
-	title: {
-		fontSize: 25,
-		color: "#508991",
-		fontWeight: "700",
-	},
-	title3: {
-		fontSize: 20,
-		color: "#1E314F",
-		fontWeight: "500",
-	},
-	text: {
-		fontSize: 17,
-		color: "#1E314F",
 	},
 	video: {
 		width: 250,
