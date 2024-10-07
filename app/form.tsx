@@ -41,7 +41,7 @@ export default function Form() {
 		{ id: 'farm', label: t("q3Farm"), value: 'Farm' },
 		{ id: 'campus', label: t("q3SchoolCampus"), value: 'School Campus' },
 		{ id: 'other', value: 'Other', label: <TextInput style={styles.locationTypeInput} placeholder={t("q3Other")}/> }
-	]), []);
+	]), [t]);
 
 	// storing given address/location
 	const [address, setAddress] = useState<string>('');

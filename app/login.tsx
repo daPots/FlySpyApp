@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { auth } from '@/firebaseConfig';
 import { FirebaseError } from '@firebase/util';
 import stylesDefault from './styles';
-
+import { useTranslation } from 'react-i18next';
 
 import {
 	signInWithEmailAndPassword,
@@ -18,32 +18,33 @@ import {
 import { router } from 'expo-router';
 import { FontAwesome5, FontAwesome } from "@expo/vector-icons";
 
-function authCodeToMessage(errorCode: String) {
+function authCodeToMessage(t: Function, errorCode: String) {
 	switch (errorCode) {
 		case "auth/email-already-in-use":
-			return "Email already in use";
+			return t("emailUsed");
 		case "auth/invalid-email":
-			return "Invalid Email Address";
+			return t("invalidEmail");
 		case "auth/invalid-password":
-			return "Invalid Password";
+			return t("invalidPassword");
 		default:
 			return errorCode;
 	}
 }
 
-function resetPassword(auth: Auth, email: string) {
+function resetPassword(t: Function,auth: Auth, email: string) {
 	try {
 		sendPasswordResetEmail(auth, email);
-		alert("Check your email!");
+		alert(t("checkEmail"));
 	}
 	catch (error) {
 		console.log("error");
 	}
-	
 }
 
 
 export default function Login() {
+	const { t, i18n } = useTranslation();
+
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [name, setName] = useState('');
@@ -64,7 +65,7 @@ export default function Login() {
 			}
 		} catch (error: unknown) {
 			if (error instanceof FirebaseError) {
-				alert(authCodeToMessage(error.code));
+				alert(authCodeToMessage(t, error.code));
 			}
 		} finally {
 			setLoading(false);
@@ -93,7 +94,7 @@ export default function Login() {
 							},
 						]}
 					>
-						{isLogin ? "Log In" : "Sign Up"}
+						{isLogin ? t("login") : t("signup")}
 					</Text>
 					{isLogin ? null : (
 						<View style={styles.inputContainer}>
@@ -102,7 +103,7 @@ export default function Login() {
 							<TextInput
 								value={name}
 								style={styles.input}
-								placeholder='Name'
+								placeholder={t("name")}
 								onChangeText={setName}
 							></TextInput>
 						</View>
@@ -112,7 +113,7 @@ export default function Login() {
 						<TextInput
 							value={email}
 							style={styles.input}
-							placeholder='Email'
+							placeholder={t("email")}
 							autoCapitalize='none'
 							onChangeText={setEmail}
 						></TextInput>
@@ -123,7 +124,7 @@ export default function Login() {
 							secureTextEntry={hidePassword}
 							value={password}
 							style={styles.input}
-							placeholder='Password'
+							placeholder={t("password")}
 							autoCapitalize='none'
 							onChangeText={setPassword}
 						></TextInput>
@@ -133,7 +134,7 @@ export default function Login() {
 					</View>
 					<TouchableOpacity
 						style={{ width: "100%" }}
-						onPress={() => resetPassword(auth, email)}
+						onPress={() => resetPassword(t, auth, email)}
 					>
 						<Text
 							style={{
@@ -143,10 +144,9 @@ export default function Login() {
 							}}
 						>
 							{" "}
-							Forgot your password?
+							{t("forgotPassword")}
 						</Text>
 					</TouchableOpacity>
-
 					<TouchableOpacity
 						style={[
 							stylesDefault.button,
@@ -160,11 +160,11 @@ export default function Login() {
 								{ color: "#1E314F", fontFamily: "NunitoSansBold" },
 							]}
 						>
-							{isLogin ? "Log In" : "Sign Up"}
+							{isLogin ? t("login") : t("signup")}
 						</Text>
 					</TouchableOpacity>
 					<View style={styles.textRow}>
-						<Text>Don't have an account?</Text>
+						<Text>{t("noAccount")}</Text>
 						<TouchableOpacity onPress={() => setLogin(!isLogin)}>
 							<Text
 								style={[
@@ -172,7 +172,7 @@ export default function Login() {
 									{ color: "#508991", fontFamily: "NunitoSansExtraBold" },
 								]}
 							>
-								{isLogin ? "Sign Up" : "Log In"}
+								{isLogin ? t("signup") : t("login")}
 							</Text>
 						</TouchableOpacity>
 					</View>
