@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { router } from "expo-router";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { Video, ResizeMode } from "expo-av";
@@ -6,8 +6,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useTranslation } from 'react-i18next';
 import LanguageToggleButton from './langToggle';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from 'firebase/firestore';  
+import { db, auth } from '../firebaseConfig'; 
 
 import stylesDefault from "./styles";
+
 
 export default function Home() {
 	const { t, i18n } = useTranslation();
@@ -23,6 +27,25 @@ export default function Home() {
 			animated: true,
 		});
 	}
+
+	const [name, setName] = useState("Guest");
+	const [submissions, setSubmissions] = useState(0);
+
+  	useEffect(() => {
+		onAuthStateChanged(auth, async (user) => {
+			if (user) {
+				// `user` comes from the `onAuthStateChanged` callback and contains the signed-in user's data
+				const userID = user.uid; // Get the user's unique ID (uid)
+				const userDoc = await getDoc(doc(db, "Users", userID));
+				if (userDoc.exists()) {
+					setName(userDoc.data().name);
+					setSubmissions(userDoc.data().submissions);
+				}
+			}
+		});
+	}, []);
+	
+
 	return (
 		<ScrollView
 			style={styles.container}
@@ -30,10 +53,12 @@ export default function Home() {
 			<SafeAreaView style={{ paddingHorizontal: 25 } }>
 				<LanguageToggleButton/>
 				<View style={styles.widgetContainer}>
-					<Text style={stylesDefault.largeText}>{t("welcomeUser")}GuestUser!</Text>
+					{
+					<Text style={stylesDefault.largeText}>{t("welcomeUser")+ name}!</Text>
+					}
 					<View style={styles.smallWidgetContainer}>
 						<View style={styles.smallWidget}>
-							<Text style={[stylesDefault.largeText, { color: "#508991" }]}>4</Text>
+							<Text style={[stylesDefault.largeText, { color: "#508991" }]}>{submissions}</Text>
 							<Text style={stylesDefault.title3}>{t("submissions")}</Text>
 						</View>
 						<View style={[styles.smallWidget, { backgroundColor: "#1E314F" }]}>

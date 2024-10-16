@@ -5,12 +5,13 @@ import { auth } from '@/firebaseConfig';
 import { FirebaseError } from '@firebase/util';
 import stylesDefault from './styles';
 import { useTranslation } from 'react-i18next';
+import {doc, setDoc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
 
 import {
 	signInWithEmailAndPassword,
 	createUserWithEmailAndPassword,
 	getAuth,
-	updateProfile,
 	sendPasswordResetEmail,
 	Auth,
 } from "firebase/auth";
@@ -60,7 +61,13 @@ export default function Login() {
 				router.push('/home');
 			}
 			else {
-				await createUserWithEmailAndPassword(auth, email, password);
+				const userCred = await createUserWithEmailAndPassword(auth, email, password);
+				const userID = userCred?.user?.uid;
+				await setDoc(doc(db, "Users", userID), {
+					name: name,
+					email: email,
+					submissions: 0,
+				});	   
 				router.push('/home');
 			}
 		} catch (error: unknown) {
@@ -157,7 +164,7 @@ export default function Login() {
 						<Text
 							style={[
 								stylesDefault.text,
-								{ color: "#1E314F", fontFamily: "NunitoSansBold" },
+								{ color: "#1E314F", fontFamily: "NunitoSansBold", textAlign: 'center' },
 							]}
 						>
 							{isLogin ? t("login") : t("signup")}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "866920981452",
+    "project_id": "flyspy-app",
+    "storage_bucket": "flyspy-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:866920981452:android:06815f7cbb737f6f83f369",
+        "android_client_info": {
+          "package_name": "com.deleganlab.flyspy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAqXKJgV8KDh2OivH9vKtpNtjKVTTEMp0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

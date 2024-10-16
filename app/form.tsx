@@ -314,7 +314,7 @@ export default function Form() {
 								width: "100%",
 							}}
 						>
-							<MapView
+							{/* <MapView
 								style={styles.map}
 								showsUserLocation={true}
 								onPress={handleMapPress}
@@ -326,7 +326,7 @@ export default function Form() {
 								}}
 							>
 								<Marker coordinate={location} />
-							</MapView>
+							</MapView> */}
 							<TouchableOpacity
 								style={[
 									stylesDefault.button,
