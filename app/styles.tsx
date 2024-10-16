@@ -30,6 +30,7 @@ const stylesDefault = StyleSheet.create({
 	},
 	text: {
 		fontSize: 17,
+	    width: '100%',
 		color: "#1E314F",
 		fontFamily: "NunitoSansMedium",
 	},

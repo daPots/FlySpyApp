@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { router } from 'expo-router';
-import {SafeAreaView,View,ScrollView,Text,StyleSheet,StatusBar,Image,TextInput, TouchableOpacity, FlatList} from 'react-native';
+import {SafeAreaView,View,ScrollView,Text,StyleSheet,StatusBar,Image,TextInput, TouchableOpacity, FlatList, Platform} from 'react-native';
 import RadioGroup, {RadioButtonProps} from 'react-native-radio-buttons-group';
 // documentation for radio buttons: https://www.npmjs.com/package/react-native-radio-buttons-group
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -28,7 +28,10 @@ export default function Form() {
 
 	// storing the selected date flowers were seen
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+	const [showDatePicker, setShowDatePicker] = useState(false);
+
 	const onDateChange = (event: any, selectedDate: Date | undefined) => {
+		setShowDatePicker(!showDatePicker);
 		if (selectedDate) setSelectedDate(selectedDate);
 	};
 
@@ -146,7 +149,6 @@ export default function Form() {
 				]}
 				onPress={() => {
 					setSelectedFlower(item.id);
-					console.log(item.id);
 				}}
 			>
 				<Text
@@ -247,15 +249,37 @@ export default function Form() {
 					</View>
 					<View style={styles.questionCard}>
 						<Text style={stylesDefault.text}>{t("q2")}</Text>
-						<View style={{ flexDirection: "row", alignItems: "flex-start" }}>
+						<View style={{ flexDirection: "row", alignItems: "center" }}>
 							<Text style={{ fontSize: 30 }}>📅</Text>
-							<DateTimePicker
-								value={selectedDate}
-								mode='date'
-								display='default'
-								onChange={onDateChange}
-								is24Hour={true}
-							/>
+							{(Platform.OS === "ios" || showDatePicker) && (
+								<DateTimePicker
+									value={selectedDate}
+									mode='date'
+									display='default'
+									onChange={onDateChange}
+									is24Hour={true}
+								/>
+							)}
+							{Platform.OS === "android" && (
+								<TouchableOpacity
+									onPress={() => setShowDatePicker(!showDatePicker)}
+								>
+									<Text
+										style={[
+											stylesDefault.text,
+											{
+												marginLeft: 5,
+												backgroundColor: "#E7E6E6",
+												borderRadius: 10,
+												paddingHorizontal: 10,
+												paddingVertical: 5,
+											},
+										]}
+									>
+										{selectedDate.toLocaleDateString()}
+									</Text>
+								</TouchableOpacity>
+							)}
 						</View>
 					</View>
 					<View style={styles.questionCard}>
@@ -279,7 +303,7 @@ export default function Form() {
 							/>
 						</View>
 					</View>
-					<View style={styles.questionCard}>
+					<View style={[styles.questionCard]}>
 						<Text style={stylesDefault.text}>{t("q5")}</Text>
 						<Text style={stylesDefault.subText}>{t("q5Description")}</Text>
 						<View
@@ -310,6 +334,7 @@ export default function Form() {
 										backgroundColor: "#508991",
 										shadowOpacity: 0,
 										width: "100%",
+										elevation: 0,
 									},
 								]}
 								onPress={handleLocateMe}
@@ -362,7 +387,12 @@ export default function Form() {
 						<TouchableOpacity
 							style={[
 								stylesDefault.button,
-								{ backgroundColor: "#508991", width: "100%", shadowOpacity: 0 },
+								{
+									backgroundColor: "#508991",
+									width: "100%",
+									shadowOpacity: 0,
+									elevation: 0,
+								},
 							]}
 							onPress={pickImage}
 						>
@@ -438,7 +468,8 @@ const styles = StyleSheet.create({
 	locationTypeInput: {
 		borderWidth: 1,
 		borderColor: "#ccc",
-		padding: 8,
+		paddingVertical: 2,
+		paddingHorizontal: 5,
 		marginLeft: 10,
 		borderRadius: 5,
 		width: 150,
@@ -447,7 +478,8 @@ const styles = StyleSheet.create({
 	nameAddressInput: {
 		borderWidth: 1,
 		borderColor: "#ccc",
-		padding: 8,
+		paddingVertical: 2,
+		paddingHorizontal: 5,
 		marginLeft: 10,
 		borderRadius: 5,
 		width: 250,
