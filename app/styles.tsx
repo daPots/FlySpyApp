@@ -55,7 +55,7 @@ const stylesDefault = StyleSheet.create({
 		shadowRadius: 3,
 
 		// Shadow for Android
-		elevation: 5,
+		elevation: 2,
 	},
 	buttonText: {
 		color: "#FFF",

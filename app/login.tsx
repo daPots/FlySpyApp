@@ -42,7 +42,6 @@ function resetPassword(t: Function,auth: Auth, email: string) {
 	}
 }
 
-
 export default function Login() {
 	const { t, i18n } = useTranslation();
 
@@ -58,6 +57,7 @@ export default function Login() {
 		try {
 			if (isLogin) {
 				await signInWithEmailAndPassword(auth, email, password);
+				console.log(name);
 				router.push('/home');
 			}
 			else {

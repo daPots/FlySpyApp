@@ -13,7 +13,7 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "bundleIdentifier": "com.deleganlab.flyspy",
+      "bundleIdentifier": "com.flyspyteam.flyspy",
       "supportsTablet": true
     },
     "android": {
@@ -22,7 +22,7 @@
         "backgroundColor": "#ffffff"
       },
       "googleServicesFile": "./google-services.json",
-      "package": "com.deleganlab.flyspy"
+      "package": "com.flyspyteam.flyspy"
     },
     "web": {
       "bundler": "metro",
