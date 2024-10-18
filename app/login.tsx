@@ -66,7 +66,7 @@ export default function Login() {
 				await setDoc(doc(db, "Users", userID), {
 					name: name,
 					email: email,
-					submissions: 0,
+					submissionCount: 0,
 				});	   
 				router.push('/home');
 			}

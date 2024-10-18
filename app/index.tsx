@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from 'react-i18next';
 import stylesDefault  from './styles';
 
-export default function Index() {
+export default function Index() {		
 	const { t, i18n } = useTranslation();
 
 	const [fontsLoaded] = useFonts({
@@ -81,7 +81,7 @@ export default function Index() {
 					</TouchableOpacity>
 					<View style={styles.textRow}>
 						<Text style={stylesDefault.subText}>{t("guestPrompt")}</Text>
-						<TouchableOpacity onPress={() => router.push("/home")}>
+						<TouchableOpacity onPress={() => router.replace("/home")}>
 							<Text style={{ color: "#508991", fontWeight: "bold" }}>
 								{t("signInAsGuest")}
 							</Text>

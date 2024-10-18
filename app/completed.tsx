@@ -66,7 +66,7 @@ export default function Completed() {
 					</View>
 					<TouchableOpacity
 						style={[stylesDefault.button, { height: 50, width: "90%" }]}
-						onPress={() => router.push("/home")}
+						onPress={() => router.replace("/home")}
 					>
 						<Text
 							style={

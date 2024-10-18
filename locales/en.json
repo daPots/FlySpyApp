@@ -2,7 +2,7 @@
     "description": "Contribute to the Taiwan Wing-Spot Fly Project!",
     "loginRegister": "Log In / Register",
     "guestPrompt": "Don't want to create an account?",
-    "signInAsGuest": "Sign in as guest",
+    "signInAsGuest": " Sign in as guest",
 
     "emailUsed": "Email already in use",
     "invalidEmail": "Invalid Email Address",

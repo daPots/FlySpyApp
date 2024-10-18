@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useTranslation } from 'react-i18next';
 import LanguageToggleButton from './langToggle';
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from 'firebase/firestore';  
 import { db, auth } from '../firebaseConfig'; 
 
@@ -31,18 +31,24 @@ export default function Home() {
 	const [name, setName] = useState("Guest");
 	const [submissions, setSubmissions] = useState(0);
 
-  	useEffect(() => {
-		onAuthStateChanged(auth, async (user) => {
+	useEffect(() => {
+		const unsubscribe = onAuthStateChanged(auth, async (user) => {
 			if (user) {
-				// `user` comes from the `onAuthStateChanged` callback and contains the signed-in user's data
-				const userID = user.uid; // Get the user's unique ID (uid)
+				const userID = user.uid;
 				const userDoc = await getDoc(doc(db, "Users", userID));
 				if (userDoc.exists()) {
-					setName(userDoc.data().name);
-					setSubmissions(userDoc.data().submissions);
+					const newName = userDoc.data().name;
+					const newSubmissionCount = userDoc.data().submissionCount;
+					if (newName !== name) {
+						setName(newName);
+					}
+					if (newSubmissionCount !== submissions) {
+						setSubmissions(newSubmissionCount);
+					}
 				}
 			}
 		});
+		return ()=> unsubscribe();
 	}, []);
 	
 
@@ -64,7 +70,7 @@ export default function Home() {
 						<View style={[styles.smallWidget, { backgroundColor: "#1E314F" }]}>
 							<TouchableOpacity
 								style={styles.newFormButton}
-								onPress={() => router.push("/form")}>
+								onPress={() => router.replace("/form")}>
 								<Text style={[stylesDefault.largeText, { color: "#1E314F" }]}>+</Text>
 							</TouchableOpacity>
 							<Text style={[stylesDefault.title3, { color: "#FEFEFE" }]}>
