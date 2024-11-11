@@ -6,12 +6,19 @@
 
     "emailUsed": "Email already in use",
     "invalidEmail": "Invalid Email Address",
-    "invalidPassword": "Invalid Password",
+    "incorrectPassword": "Invalid Password",
+    "enterPassword": "Please enter your password!",
+    "enterName": "Please enter your username!",
+    "userNotFound": "User not found",
+    "unknownError": "Unknown Error",
     "checkEmail": "Check your email!",
+    "weakPassword": "Password is too weak",
+
     "name": "Name",
     "email": "Email",
     "password": "Password",
     "forgotPassword": "Forgot your password?",
+    "enterEmail": "Please enter your email to reset password!",
     "login": "Log In",
     "signup": "Sign Up",
     "noAccount": "Don't have an account?",
@@ -25,6 +32,8 @@
     
     "q1": "Have you seen flies on flowers as pictured below?",
     "q1Description": "The males of this species have black spots on their wings. The females do not. The flies are about 2 mm long.",
+    "Yes": "Yes",
+    "No": "No",
     "q2": "Please enter the date on which you saw the flies.",
     "q3": "In what type of place did you see the flies?",
     "q3Park": "Park",
@@ -74,6 +83,9 @@
     
     "formSubmitted": "Form Submitted!",
     "thankYou": "Thank you for participating in the Taiwan Wing-Spot Fly Project!",
-    "updates?": "Would you like to receive email updates on our project?",
+    "updates?": "Subscribe to receive email updates on our project!",
+    "subscribe": "Subscribe",
+    "unsubscribedMessage": "Click here to unsubscribe",
+    "unsubscribe": "Unsubscribe",
     "returnHome": "Return to Home"
 }

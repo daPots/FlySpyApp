@@ -6,12 +6,19 @@
 
     "emailUsed": "電子郵件已被使用",
     "invalidEmail": "電子郵件地址無效",
-    "invalidPassword": "密碼無效",
+    "incorrectPassword": "密碼無效",
+    "enterPassword": "請先輸入您的密碼！",
+    "enterName": "請先輸入您的用戶名！",
+    "userNotFound": "找不到用戶",
+    "unknownError": "未知錯誤",
     "checkEmail": "檢查您的電子郵件！",
+    "weakPassword": "密碼太弱",
+
     "name": "姓名",
     "email": "電子郵件",
     "password": "密碼",
     "forgotPassword": "忘記密碼了嗎？",
+    "enterEmail": "請先輸入您的電子郵件以重置密碼！",
     "login": "登入",
     "signup": "報名",
     "noAccount": "沒有帳戶？",
@@ -76,6 +83,9 @@
     
     "formSubmitted": "表格已提交",
     "thankYou": "感謝您參與台灣翼點計畫！",
-    "updates?": "您想接收有關我們專案的電子郵件更新嗎？",
+    "updates?": "訂閱以接收有關我們項目的電子郵件更新！",
+    "subscribe": "訂閱",
+    "unsubscribedMessage": "點此取消訂閱",
+    "unsubscribe": "取消訂閱",
     "returnHome": "回首頁"
 }
