@@ -248,7 +248,7 @@ export default function Form() {
 				selectedDate,
 				address,
 				location,
-				additionalInfo
+				additionalInfo,
 			);
 			const user = auth.currentUser;
 			const userID = user ? user.uid : "Guest";
@@ -260,10 +260,11 @@ export default function Form() {
 				await setDoc(doc(db, "Users", userID, "Submissions", submissionId), {
 					locationType: selectedLocationType,
 					date: selectedDate,
+					dateSubmitted: new Date(),
 					address: address,
 					coordinates: location,
 					flowerType: selectedFlower,
-					times: isChecked,
+					times: timeData.filter((e) => isChecked[e.id]).map((e) => e.time),
 					image: image,
 					additionalInfo: additionalInfo,
 				});
