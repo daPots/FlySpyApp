@@ -241,11 +241,15 @@ export default function Form() {
 
 	// submit form -> send data to backend/database
 	const handleSubmit = async () => {
+		if (!selectedFlyIdentify||!selectedDate||!selectedLocationType||!selectedFlower||!location||!isChecked.some((checked)=>checked)){ 
+			alert(t("fieldsRequired"));
+			return;
+		}
 		try {
 			console.log(
 				selectedFlyIdentify,
-				selectedLocationType,
 				selectedDate,
+				selectedLocationType,
 				address,
 				location,
 				additionalInfo,
@@ -303,7 +307,9 @@ export default function Form() {
 			<ScrollView style={styles.scrollView}>
 				<View style={{ marginTop: 40 }}></View>
 				<View style={styles.questionCard}>
-					<Text style={stylesDefault.text}>{t("q1")}</Text>
+					<Text style={stylesDefault.text}>{t("q1")}
+						<Text style={{ color: "red", fontSize: 17 }}> *</Text>
+					</Text>
 					<Image
 						source={require("../assets/images/d-elegans.png")}
 						style={{ width: 250, height: 190, marginBottom: 10 }}
@@ -322,7 +328,9 @@ export default function Form() {
 					</View>
 				</View>
 				<View style={styles.questionCard}>
-					<Text style={stylesDefault.text}>{t("q2")}</Text>
+					<Text style={stylesDefault.text}>{t("q2")}
+						<Text style={{ color: "red", fontSize: 17 }}> *</Text>
+					</Text>
 					<View style={{ flexDirection: "row", alignItems: "center" }}>
 						<Text style={{ fontSize: 30 }}>📅</Text>
 						{(Platform.OS === "ios" || showDatePicker) && (
@@ -357,7 +365,9 @@ export default function Form() {
 					</View>
 				</View>
 				<View style={styles.questionCard}>
-					<Text style={stylesDefault.text}>{t("q3")}</Text>
+					<Text style={stylesDefault.text}>{t("q3")}
+						<Text style={{ color: "red", fontSize: 17 }}> *</Text>
+					</Text>
 					<RadioGroup
 						containerStyle={styles.radioButtons}
 						radioButtons={locationType}
@@ -378,7 +388,9 @@ export default function Form() {
 					</View>
 				</View>
 				<View style={[styles.questionCard]}>
-					<Text style={stylesDefault.text}>{t("q5")}</Text>
+					<Text style={stylesDefault.text}>{t("q5")}
+						<Text style={{ color: "red", fontSize: 17 }}> *</Text>
+					</Text>
 					<Text style={stylesDefault.subText}>{t("q5Description")}</Text>
 					<View
 						style={{
@@ -429,7 +441,9 @@ export default function Form() {
 					</View>
 				</View>
 				<View style={styles.questionCard}>
-					<Text style={stylesDefault.text}>{t("q6")}</Text>
+					<Text style={stylesDefault.text}>{t("q6")}
+						<Text style={{ color: "red", fontSize: 17 }}> *</Text>
+					</Text>
 					<FlatList
 						data={flowerData}
 						renderItem={renderItem}
@@ -442,7 +456,9 @@ export default function Form() {
 					/>
 				</View>
 				<View style={styles.questionCard}>
-					<Text style={stylesDefault.text}>{t("q7")}</Text>
+					<Text style={stylesDefault.text}>{t("q7")}
+						<Text style={{ color: "red", fontSize: 17 }}> *</Text>
+					</Text>
 					{timeData.map((timeItem) => (
 						<View key={timeItem.id} style={styles.checkItem}>
 							<Checkbox
