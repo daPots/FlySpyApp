@@ -1,14 +1,20 @@
 import React from "react";
 import { router } from "expo-router";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { useFonts } from "expo-font";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from 'react-i18next';
-import stylesDefault  from './styles';
+import stylesDefault from './styles';
+import { getAuth, signInAnonymously } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
+
+
+
 
 export default function Index() {		
 	const { t, i18n } = useTranslation();
-
+	
 	const [fontsLoaded] = useFonts({
 		NunitoSansRegular: require("../assets/fonts/NunitoSansRegular.ttf"),
 		NunitoSansMedium: require("../assets/fonts/NunitoSansMedium.ttf"),
@@ -16,10 +22,32 @@ export default function Index() {
 		NunitoSansExtraBold: require("../assets/fonts/NunitoSansExtraBold.ttf"),
 	});
 	if (!fontsLoaded) return <Text>Loading...</Text>;
-
+	
 	const changeLanguage = (language: string) => {
 		i18n.changeLanguage(language);
-	  };
+	};
+	
+	const signInAsGuest = async() => {
+		const auth = getAuth();
+		try {
+			const anonCred = await signInAnonymously(auth);
+			const userID = anonCred?.user?.uid;
+
+			await setDoc(doc(db, "Users", userID), {
+				name: "Guest",
+				email: "N/A",
+				submissionCount: 0,
+			});
+			console.log("Sucessfully signed in anonymously");
+			router.replace("/home");
+		} catch (error) {
+			 if (error instanceof Error) {
+				 console.log("Error with signing in anonymous user: " + error.message);
+				 Alert.alert("Ran into error, try again. ")
+			}
+		}
+		
+	};
 
 	return (
 		<SafeAreaView style={styles.container}>
@@ -81,10 +109,11 @@ export default function Index() {
 					</TouchableOpacity>
 					<View style={styles.textRow}>
 						<Text style={stylesDefault.subText}>{t("guestPrompt")}</Text>
-						<TouchableOpacity onPress={() => router.replace("/home")}>
+						<TouchableOpacity onPress={() => signInAsGuest()}>
 							<Text style={{ color: "#508991", fontWeight: "bold" }}>
 								{t("signInAsGuest")}
 							</Text>
+
 						</TouchableOpacity>
 					</View>
 				</View>

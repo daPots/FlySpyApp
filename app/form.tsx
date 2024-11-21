@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { router } from 'expo-router';
-import {SafeAreaView,View,ScrollView,Text,StyleSheet,StatusBar,Image,TextInput, TouchableOpacity, FlatList, Platform} from 'react-native';
+import {SafeAreaView,View,ScrollView,Text,StyleSheet,StatusBar,Image,TextInput, TouchableOpacity, FlatList, Platform, Alert} from 'react-native';
 import RadioGroup, {RadioButtonProps} from 'react-native-radio-buttons-group';
 // documentation for radio buttons: https://www.npmjs.com/package/react-native-radio-buttons-group
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -18,7 +18,15 @@ import LanguageToggleButton from './langToggle';
 import stylesDefault from "./styles";
 
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
-import { auth, db } from "../firebaseConfig";
+import { auth, db, storage } from "../firebaseConfig";
+import {
+	getStorage,
+	ref,
+	uploadBytesResumable,
+	getDownloadURL,
+} from "firebase/storage";
+import { firebase } from '@react-native-firebase/firestore';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 
 export default function Form() {
@@ -29,8 +37,22 @@ export default function Form() {
 	>();
 	const flyIdentify: RadioButtonProps[] = useMemo(
 		() => [
-			{ id: "yes", label: t("Yes"), value: "Yes" },
-			{ id: "no", label: t("No"), value: "No" },
+			{
+				id: "yes",
+				label: t("Yes"),
+				value: "Yes",
+				borderColor: "#1E314F",
+				color: "#508991",
+				size: 20,
+			},
+			{
+				id: "no",
+				label: t("No"),
+				value: "No",
+				borderColor: "#1E314F",
+				color: "#508991",
+				size: 20,
+			},
 		],
 		[]
 	);
@@ -50,15 +72,46 @@ export default function Form() {
 	>();
 	const locationType: RadioButtonProps[] = useMemo(
 		() => [
-			{ id: "park", label: t("q3Park"), value: "Park" },
+			{
+				id: "park",
+				label: t("q3Park"),
+				value: "Park",
+				borderColor: "#1E314F",
+				color: "#508991",
+				size: 20,
+			},
 			{
 				id: "bgarden",
 				label: t("q3BotanicalGarden"),
 				value: "Botanical Garden",
+				borderColor: "#1E314F",
+				color: "#508991",
+				size: 20,
 			},
-			{ id: "rgarden", label: t("q3Residence"), value: "Residence [Garden]" },
-			{ id: "farm", label: t("q3Farm"), value: "Farm" },
-			{ id: "campus", label: t("q3SchoolCampus"), value: "School Campus" },
+			{
+				id: "rgarden",
+				label: t("q3Residence"),
+				value: "Residence [Garden]",
+				borderColor: "#1E314F",
+				color: "#508991",
+				size: 20,
+			},
+			{
+				id: "farm",
+				label: t("q3Farm"),
+				value: "Farm",
+				borderColor: "#1E314F",
+				color: "#508991",
+				size: 20,
+			},
+			{
+				id: "campus",
+				label: t("q3SchoolCampus"),
+				value: "School Campus",
+				borderColor: "#1E314F",
+				color: "#508991",
+				size: 20,
+			},
 			{
 				id: "other",
 				value: "Other",
@@ -68,6 +121,9 @@ export default function Form() {
 						placeholder={t("q3Other")}
 					/>
 				),
+				borderColor: "#1E314F",
+				color: "#508991",
+				size: 20,
 			},
 		],
 		[t]
@@ -175,9 +231,9 @@ export default function Form() {
 					styles.flowerCard,
 					item.id == selectedFlower
 						? {
-								borderColor: color,
-								borderWidth: 2,
-								backgroundColor: "#50899140",
+							borderColor: color,
+							borderWidth: 2,
+							backgroundColor: "#50899140",
 						  }
 						: undefined,
 				]}
@@ -223,10 +279,9 @@ export default function Form() {
 		setChecked(isChecked.map((e, idx) => (idx === timeItem.id ? !e : e)));
 	}
 
-	// ImagePicker -----------------------------
+	// Image Picker
 	const [image, setImage] = useState<string | null>(null);
 	const pickImage = async () => {
-		// No permissions request is necessary for launching the image library
 		let result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: ImagePicker.MediaTypeOptions.All,
 			allowsEditing: true,
@@ -236,51 +291,128 @@ export default function Form() {
 		if (!result.canceled) setImage(result.assets[0].uri);
 	};
 
+
+	const uploadImageToFirebase = async (uri: string): Promise<string | null> => {
+		try {
+			const response = await fetch(uri);
+			const blob = await response.blob();
+
+			const filename = `images/${Date.now()}-${Math.random()
+				.toString(36)
+				.substring(7)}.jpg`;
+			const storageRef = ref(storage, filename);
+
+			const uploadTask = uploadBytesResumable(storageRef, blob);
+
+			return new Promise((resolve, reject) => {
+				uploadTask.on(
+					"state_changed",
+					(snapshot) => {
+						// Track upload progress
+						const progress =
+							(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+						console.log(`Upload is ${progress}% done`);
+					},
+					(error) => {
+						// Handle unsuccessful uploads and show error alert
+						console.error("Upload error:", error);
+						Alert.alert(
+							"Upload Error",
+							"Failed to upload image. Please try again."
+						);
+						reject(error);
+					},
+					async () => {
+						// Handle successful uploads and get the download URL
+						const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+						console.log("Download URL:", downloadURL);
+						resolve(downloadURL);
+					}
+				);
+			});
+		} catch (error) {
+			console.error("Detailed upload error:", error);
+			Alert.alert(
+				"Upload Error",
+				"An unknown error occurred while uploading the image."
+			);
+			return null;
+		}
+	};
+
+
+
 	// storing additional information
 	const [additionalInfo, setAdditionalInfo] = useState<string>("");
 
+
 	// submit form -> send data to backend/database
 	const handleSubmit = async () => {
-		if (!selectedFlyIdentify||!selectedDate||!selectedLocationType||!selectedFlower||!location||!isChecked.some((checked)=>checked)){ 
-			alert(t("fieldsRequired"));
-			return;
-		}
 		try {
-			console.log(
-				selectedFlyIdentify,
-				selectedDate,
-				selectedLocationType,
-				address,
-				location,
-				additionalInfo,
-			);
 			const user = auth.currentUser;
 			const userID = user ? user.uid : "Guest";
 			const userDoc = await getDoc(doc(db, "Users", userID));
-			if (userDoc.exists()) {
-				const newSubmissionCount = 1 + userDoc.data().submissionCount;
-				const submissionId = "" + newSubmissionCount;
-				console.log(submissionId);
-				await setDoc(doc(db, "Users", userID, "Submissions", submissionId), {
-					locationType: selectedLocationType,
-					date: selectedDate,
-					dateSubmitted: new Date(),
-					address: address,
-					coordinates: location,
-					flowerType: selectedFlower,
-					times: timeData.filter((e) => isChecked[e.id]).map((e) => e.time),
-					image: image,
-					additionalInfo: additionalInfo,
-				});
-				await updateDoc(doc(db, "Users", userID), {
-					submissionCount: newSubmissionCount,
-				});
-			} else {
-				console.log("User ID not found");
+			
+			// Attempt to upload image if selected
+			let imageUrl: string | null = null;
+			if (image) {
+				try {
+					imageUrl = await uploadImageToFirebase(image);
+				} catch (uploadError) {
+					console.error("Image upload failed:", uploadError);
+					Alert.alert(
+						"Image Upload Failed",
+						"Failed to upload image, but we can still submit the form without it. Would you like to continue?",
+						[
+							{ text: "Cancel", style: "cancel" },
+							{
+								text: "Continue",
+								onPress: () => submitData(userID, userDoc, null),
+							},
+						]
+					);
+					return;
+				}
 			}
-			router.replace("/completed");
+
+			await submitData(userID, userDoc, imageUrl);
 		} catch (error) {
-			console.error("Error during Firestore operations:", error);
+			console.error("Submission error:", error);
+			Alert.alert(
+				"Submission Failed",
+				"Failed to submit form. Please try again."
+			);
+		}
+	};
+
+	const submitData = async (
+		userID: string,
+		userDoc: any,
+		imageUrl: string | null
+	) => {
+		if (userDoc.exists()) {
+			const newSubmissionCount = 1 + userDoc.data().submissionCount;
+			const submissionId = `${newSubmissionCount}`;
+
+			await setDoc(doc(db, "Users", userID, "Submissions", submissionId), {
+				locationType: selectedLocationType,
+				date: selectedDate,
+				address: address,
+				coordinates: location,
+				flowerType: selectedFlower,
+				times: timeData.filter((e) => isChecked[e.id]).map((e) => e.time),
+				image: imageUrl,
+				additionalInfo: additionalInfo,
+				submittedAt: new Date(),
+			});
+
+			await updateDoc(doc(db, "Users", userID), {
+				submissionCount: newSubmissionCount,
+			});
+
+			router.replace("/completed");
+		} else {
+			throw new Error("User ID not found");
 		}
 	};
 
@@ -307,19 +439,20 @@ export default function Form() {
 			<ScrollView style={styles.scrollView}>
 				<View style={{ marginTop: 40 }}></View>
 				<View style={styles.questionCard}>
-					<Text style={stylesDefault.text}>{t("q1")}
+					<Text style={stylesDefault.text}>
+						{t("q1")}
 						<Text style={{ color: "red", fontSize: 17 }}> *</Text>
 					</Text>
 					<Image
 						source={require("../assets/images/d-elegans.png")}
-						style={{ width: 250, height: 190, marginBottom: 10 }}
+						style={{ width: "100%", height: 250 }}
 					/>
 					<Text style={stylesDefault.subText}>{t("q1Description")}</Text>
-					<View style={{ paddingLeft: 30, alignSelf: "flex-start" }}>
+					<View style={{ width: "100%", alignItems: "center" }}>
 						<RadioGroup
 							containerStyle={{
-								alignItems: "flex-start",
 								flexDirection: "row",
+								justifyContent: "center",
 							}}
 							radioButtons={flyIdentify}
 							onPress={setSelectedFlyIdentify}
@@ -328,11 +461,11 @@ export default function Form() {
 					</View>
 				</View>
 				<View style={styles.questionCard}>
-					<Text style={stylesDefault.text}>{t("q2")}
+					<Text style={stylesDefault.text}>
+						{t("q2")}
 						<Text style={{ color: "red", fontSize: 17 }}> *</Text>
 					</Text>
 					<View style={{ flexDirection: "row", alignItems: "center" }}>
-						<Text style={{ fontSize: 30 }}>📅</Text>
 						{(Platform.OS === "ios" || showDatePicker) && (
 							<DateTimePicker
 								value={selectedDate}
@@ -344,20 +477,14 @@ export default function Form() {
 						)}
 						{Platform.OS === "android" && (
 							<TouchableOpacity
+								style={[
+									styles.inputContainer,
+									{ width: "60%", justifyContent: "center" },
+								]}
 								onPress={() => setShowDatePicker(!showDatePicker)}
 							>
-								<Text
-									style={[
-										stylesDefault.text,
-										{
-											marginLeft: 5,
-											backgroundColor: "#E7E6E6",
-											borderRadius: 10,
-											paddingHorizontal: 10,
-											paddingVertical: 5,
-										},
-									]}
-								>
+								<FontAwesome5 name='calendar-day' style={styles.inputIcon} />
+								<Text style={[stylesDefault.text, { width: "auto" }]}>
 									{selectedDate.toLocaleDateString()}
 								</Text>
 							</TouchableOpacity>
@@ -365,7 +492,8 @@ export default function Form() {
 					</View>
 				</View>
 				<View style={styles.questionCard}>
-					<Text style={stylesDefault.text}>{t("q3")}
+					<Text style={stylesDefault.text}>
+						{t("q3")}
 						<Text style={{ color: "red", fontSize: 17 }}> *</Text>
 					</Text>
 					<RadioGroup
@@ -378,7 +506,6 @@ export default function Form() {
 				<View style={styles.questionCard}>
 					<Text style={stylesDefault.text}>{t("q4")}</Text>
 					<View style={{ flexDirection: "row", alignItems: "center" }}>
-						<Text style={{ fontSize: 20 }}>🏡</Text>
 						<TextInput
 							style={styles.nameAddressInput}
 							placeholder={t("q4Box")}
@@ -388,7 +515,8 @@ export default function Form() {
 					</View>
 				</View>
 				<View style={[styles.questionCard]}>
-					<Text style={stylesDefault.text}>{t("q5")}
+					<Text style={stylesDefault.text}>
+						{t("q5")}
 						<Text style={{ color: "red", fontSize: 17 }}> *</Text>
 					</Text>
 					<Text style={stylesDefault.subText}>{t("q5Description")}</Text>
@@ -430,18 +558,20 @@ export default function Form() {
 							</Text>
 						</TouchableOpacity>
 						<View style={{ flexDirection: "row", alignItems: "center" }}>
-							<Text style={{ fontSize: 20 }}>📍</Text>
-							<TextInput
-								style={styles.nameAddressInput}
-								placeholder={t("q5Coordinates")}
-								value={coordsText}
-								editable={false}
-							/>
+							<View style={styles.inputContainer}>
+								<FontAwesome name='location-arrow' style={styles.inputIcon} />
+								<TextInput
+									placeholder={t("q5Coordinates")}
+									value={coordsText}
+									editable={false}
+								/>
+							</View>
 						</View>
 					</View>
 				</View>
 				<View style={styles.questionCard}>
-					<Text style={stylesDefault.text}>{t("q6")}
+					<Text style={stylesDefault.text}>
+						{t("q6")}
 						<Text style={{ color: "red", fontSize: 17 }}> *</Text>
 					</Text>
 					<FlatList
@@ -452,24 +582,30 @@ export default function Form() {
 						numColumns={2}
 						scrollEnabled={false}
 						columnWrapperStyle={{ justifyContent: "space-between" }}
-						contentContainerStyle={{ paddingBottom: 20 }}
+						contentContainerStyle={{ paddingBottom: 40, gap: 10 }}
 					/>
 				</View>
 				<View style={styles.questionCard}>
-					<Text style={stylesDefault.text}>{t("q7")}
+					<Text style={stylesDefault.text}>
+						{t("q7")}
 						<Text style={{ color: "red", fontSize: 17 }}> *</Text>
 					</Text>
 					{timeData.map((timeItem) => (
-						<View key={timeItem.id} style={styles.checkItem}>
+						<TouchableOpacity
+							onPress={() => toCheck(timeItem)}
+							key={timeItem.id}
+							style={styles.checkItem}
+						>
 							<Checkbox
 								onValueChange={() => toCheck(timeItem)}
 								value={isChecked.at(timeItem.id)}
 								color={isChecked ? "#508991" : "black"}
 							/>
-							<Text style={[stylesDefault.text, { marginLeft: 10 }]}>
+
+							<Text style={[stylesDefault.text, {marginLeft: 10, width: 'auto'}]}>
 								{timeItem.time}
 							</Text>
-						</View>
+						</TouchableOpacity>
 					))}
 				</View>
 				<View style={styles.questionCard}>
@@ -526,7 +662,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		paddingTop: StatusBar.currentHeight,
-		backgroundColor: "white",
+		backgroundColor: "#F5F5F5",
 	},
 	scrollView: {
 		paddingHorizontal: 20,
@@ -534,13 +670,13 @@ const styles = StyleSheet.create({
 	questionCard: {
 		flex: 1,
 		gap: 10,
-		backgroundColor: "#F5F5F5",
+		backgroundColor: "#FEFEFE",
 		borderRadius: 20,
 		paddingHorizontal: "10%",
 		paddingVertical: 25,
 		alignItems: "center",
 		justifyContent: "center",
-		marginBottom: 10,
+		marginBottom: 20,
 		// Shadow for iOS
 		shadowColor: "#000",
 		shadowOffset: { width: 0, height: 2 },
@@ -550,29 +686,28 @@ const styles = StyleSheet.create({
 		elevation: 2,
 	},
 	radioButtons: {
-		marginLeft: 30,
-		alignSelf: "flex-start",
+		width: '100%',
 		alignItems: "flex-start",
 		flexDirection: "column",
 	},
 	locationTypeInput: {
-		borderWidth: 1,
+		borderWidth: 0,
+		borderBottomWidth: 1,
 		borderColor: "#ccc",
 		paddingVertical: 2,
-		paddingHorizontal: 5,
-		marginLeft: 10,
+		paddingHorizontal: 10,
 		borderRadius: 5,
-		width: 150,
+		width: 200,
+		height: 25,
 		color: "black",
 	},
 	nameAddressInput: {
 		borderWidth: 1,
 		borderColor: "#ccc",
 		paddingVertical: 2,
-		paddingHorizontal: 5,
-		marginLeft: 10,
+		paddingHorizontal: 10,
 		borderRadius: 5,
-		width: 250,
+		width: "100%",
 		color: "black",
 	},
 	map: {
@@ -580,12 +715,14 @@ const styles = StyleSheet.create({
 		height: 190,
 	},
 	flowerCard: {
-		width: "45%",
-		margin: 5,
+		width: "49%",
+		gap: 5,
+		margin: 0,
 		borderWidth: 1,
 		borderColor: "#ccc",
-		padding: 8,
+		padding: 10,
 		borderRadius: 5,
+		justifyContent: "space-between",
 	},
 	flowerImg: {
 		width: "100%",
@@ -599,16 +736,33 @@ const styles = StyleSheet.create({
 		borderColor: "#ccc",
 		padding: 8,
 		borderRadius: 5,
-		width: 270,
+		width: "100%",
 		height: 100,
 		color: "black",
 		fontSize: 18,
 	},
 	checkItem: {
 		flexDirection: "row",
-		width: 270,
+		width: '100%',
 	},
 	checkBox: {
 		borderColor: "black",
+	},
+	inputIcon: {
+		color: "#1E314F",
+		fontSize: 17,
+	},
+	inputContainer: {
+		borderWidth: 1,
+		borderColor: "#ccc",
+		paddingVertical: 2,
+		paddingHorizontal: 10,
+		borderRadius: 5,
+		width: "100%",
+		color: "black",
+
+		flexDirection: "row",
+		alignItems: "center",
+		gap: 10,
 	},
 });
