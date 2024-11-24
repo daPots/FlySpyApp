@@ -78,7 +78,7 @@ export default function Completed() {
                     <TouchableOpacity
                         style={[
                             stylesDefault.button,
-                            { backgroundColor: "#508991", width: "40%" },
+                            { backgroundColor: "#508991" },
                         ]}
                         onPress={toggleSubscription}
                     >
@@ -115,34 +115,34 @@ export default function Completed() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#C2DCCC",
-        alignItems: "center",
-        justifyContent: "flex-start",
-    },
-    confirmationContainer: {
-        flex: 1,
-        backgroundColor: "#FEFEFE",
-        width: "90%",
-        gap: 20,
-        borderRadius: 20,
-        paddingHorizontal: "10%",
-        alignItems: "center",
-        justifyContent: "center",
-        marginBottom: "10%",
-        // Shadow for iOS
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 1,
-        // Shadow for Android
-        elevation: 2,
-    },
-    confirmationButtonContainer: {
-        flexDirection: "row",
-        justifyContent: "center",
-        width: "90%",
-        marginBottom: 20,
-    },
+	container: {
+		flex: 1,
+		backgroundColor: "#cbe2db",
+		alignItems: "center",
+		justifyContent: "flex-start",
+	},
+	confirmationContainer: {
+		flex: 1,
+		backgroundColor: "#FEFEFE",
+		width: "90%",
+		gap: 20,
+		borderRadius: 20,
+		paddingHorizontal: "10%",
+		alignItems: "center",
+		justifyContent: "center",
+		marginBottom: "10%",
+		// Shadow for iOS
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.2,
+		shadowRadius: 1,
+		// Shadow for Android
+		elevation: 2,
+	},
+	confirmationButtonContainer: {
+		flexDirection: "row",
+		justifyContent: "center",
+		width: "90%",
+		marginBottom: 20,
+	},
 });

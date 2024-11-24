@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { router } from "expo-router";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert} from "react-native";
 import { Video, ResizeMode } from "expo-av";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -10,12 +10,14 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from 'firebase/firestore';  
 import { db, auth } from '../firebaseConfig'; 
 import stylesDefault from "./styles";
+import Loading  from "./loading";
 
 export default function Home() {
 	const { t, i18n } = useTranslation();
 	const [expand, setExpand] = React.useState(false); 
 	const scrollRef = useRef<ScrollView | null>(null);
 
+	const [isLoading, setIsLoading] = useState(false);
 	const [name, setName] = useState("Guest");
 	const [submissions, setSubmissions] = useState(0);
 
@@ -30,6 +32,7 @@ export default function Home() {
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
 			if (user) {
 				const userID = user.uid;
+				setIsLoading(true);
 				const userDoc = await getDoc(doc(db, "Users", userID));
 				if (userDoc.exists()) {
 					const newName = userDoc.data().name;
@@ -38,6 +41,7 @@ export default function Home() {
 					console.log(name);
 					setSubmissions(newSubmissionCount || submissions);
 				}
+				setIsLoading(false);
 			}
 		});
 		return () => unsubscribe();
@@ -56,28 +60,39 @@ export default function Home() {
 	return (
 		<ScrollView
 			style={styles.container}
-			contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}>
+			contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+		>
+			{isLoading && (<Loading/>)}
 			<SafeAreaView style={{ paddingHorizontal: 25 }}>
 				<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
 					<TouchableOpacity onPress={handleLogout}>
-						<FontAwesome5 name="sign-out-alt" size={24} color="#1E314F" />
+						<FontAwesome5 name='sign-out-alt' size={24} color='#1E314F' />
 					</TouchableOpacity>
 					<LanguageToggleButton />
 				</View>
 				<View style={styles.widgetContainer}>
-					<Text style={stylesDefault.largeText}>{t("welcomeUser") + name}!</Text>
+					<Text style={stylesDefault.largeText}>
+						{t("welcomeUser") + name}!
+					</Text>
 					<View style={styles.smallWidgetContainer}>
 						<View style={styles.smallWidget}>
-							<Text style={[stylesDefault.largeText, { color: "#508991" }]}>{submissions}</Text>
+							<Text style={[stylesDefault.largeText, { color: "#508991" }]}>
+								{submissions}
+							</Text>
 							<Text style={stylesDefault.title3}>{t("submissions")}</Text>
 						</View>
 						<View style={[styles.smallWidget, { backgroundColor: "#1E314F" }]}>
 							<TouchableOpacity
 								style={styles.newFormButton}
-								onPress={() => router.replace("/form")}>
-								<Text style={[stylesDefault.largeText, { color: "#1E314F" }]}>+</Text>
+								onPress={() => router.replace("/form")}
+							>
+								<Text style={[stylesDefault.largeText, { color: "#1E314F" }]}>
+									+
+								</Text>
 							</TouchableOpacity>
-							<Text style={[stylesDefault.title3, { color: "#FEFEFE" }]}>{t("newForm")}</Text>
+							<Text style={[stylesDefault.title3, { color: "#FEFEFE" }]}>
+								{t("newForm")}
+							</Text>
 						</View>
 					</View>
 					<View style={styles.videosWidget}>
@@ -100,13 +115,16 @@ export default function Home() {
 						</ScrollView>
 					</View>
 					<View style={styles.missionWidget}>
-						<TouchableOpacity
-							style={styles.preview}
-							onPress={expandFunc}>
+						<TouchableOpacity style={styles.preview} onPress={expandFunc}>
 							<Text style={stylesDefault.title}>{t("ourMission")}</Text>
-							<FontAwesome5 name={expand ? "caret-up" : "caret-down"} style={stylesDefault.title} />
+							<FontAwesome5
+								name={expand ? "caret-up" : "caret-down"}
+								style={stylesDefault.title}
+							/>
 						</TouchableOpacity>
-						{expand && <Text style={stylesDefault.text}>{t("missionStatement")}</Text>}
+						{expand && (
+							<Text style={stylesDefault.text}>{t("missionStatement")}</Text>
+						)}
 					</View>
 				</View>
 			</SafeAreaView>
@@ -160,6 +178,7 @@ const styles = StyleSheet.create({
 		width: "100%",
 		borderRadius: 30,
 		padding: 25,
+		marginBottom: 20,
 		shadowColor: "#000",
 		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.3,

@@ -196,49 +196,49 @@ export default function Login() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#C2DCCC",
-        justifyContent: "space-between",
-    },
-    formContainer: {
-        width: "100%",
-        paddingHorizontal: "10%",
-        paddingVertical: "15%",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#FEFEFE",
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        gap: 30,
-    },
-    input: {
-        flex: 1,
-        fontSize: 18,
-    },
-    inputIcon: {
-        color: "#1E314F",
-        fontSize: 17,
-    },
-    inputContainer: {
-        flexDirection: "row",
-        width: "100%",
-        alignItems: "center",
-        gap: 10,
-        borderRadius: 30,
-        backgroundColor: "#F3F5F4",
-        height: 50,
-        paddingHorizontal: 20,
-    },
-    textRow: {
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "row",
-        height: 30,
-        gap: 5,
-    },
-    navigationContainer: {
-        width: "100%",
-        paddingHorizontal: "5%",
-    },
+	container: {
+		flex: 1,
+		backgroundColor: "#cbe2db",
+		justifyContent: "space-between",
+	},
+	formContainer: {
+		width: "100%",
+		paddingHorizontal: "10%",
+		paddingVertical: "15%",
+		alignItems: "center",
+		justifyContent: "center",
+		backgroundColor: "#FEFEFE",
+		borderTopLeftRadius: 30,
+		borderTopRightRadius: 30,
+		gap: 30,
+	},
+	input: {
+		flex: 1,
+		fontSize: 18,
+	},
+	inputIcon: {
+		color: "#1E314F",
+		fontSize: 17,
+	},
+	inputContainer: {
+		flexDirection: "row",
+		width: "100%",
+		alignItems: "center",
+		gap: 10,
+		borderRadius: 30,
+		backgroundColor: "#F5F5F5",
+		height: 50,
+		paddingHorizontal: 20,
+	},
+	textRow: {
+		justifyContent: "center",
+		alignItems: "center",
+		flexDirection: "row",
+		height: 30,
+		gap: 5,
+	},
+	navigationContainer: {
+		width: "100%",
+		paddingHorizontal: "5%",
+	},
 });

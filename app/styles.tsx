@@ -73,6 +73,7 @@ const stylesDefault = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "center",
 		alignItems: "center",
+		marginVertical: 10,
 	},
 	navigationIcon: {
 		color: "#1E314F",

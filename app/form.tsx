@@ -15,7 +15,9 @@ import * as Location from 'expo-location';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useTranslation } from 'react-i18next';
 import LanguageToggleButton from './langToggle';
+import Loading from "./loading";
 import stylesDefault from "./styles";
+
 
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db, storage } from "../firebaseConfig";
@@ -30,6 +32,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 
 
 export default function Form() {
+	const [isLoading, setIsLoading] = useState(false);
 	const { t, i18n } = useTranslation();
 	// options for "have you seen flies on flowers as pictured below?"
 	const [selectedFlyIdentify, setSelectedFlyIdentify] = useState<
@@ -289,6 +292,7 @@ export default function Form() {
 			quality: 1,
 		});
 		if (!result.canceled) setImage(result.assets[0].uri);
+
 	};
 
 
@@ -332,6 +336,7 @@ export default function Form() {
 			});
 		} catch (error) {
 			console.error("Detailed upload error:", error);
+			setIsLoading(false);
 			Alert.alert(
 				"Upload Error",
 				"An unknown error occurred while uploading the image."
@@ -348,6 +353,7 @@ export default function Form() {
 
 	// submit form -> send data to backend/database
 	const handleSubmit = async () => {
+		setIsLoading(true);
 		try {
 			const user = auth.currentUser;
 			const userID = user ? user.uid : "Guest";
@@ -378,6 +384,7 @@ export default function Form() {
 			await submitData(userID, userDoc, imageUrl);
 		} catch (error) {
 			console.error("Submission error:", error);
+			setIsLoading(false);
 			Alert.alert(
 				"Submission Failed",
 				"Failed to submit form. Please try again."
@@ -409,15 +416,16 @@ export default function Form() {
 			await updateDoc(doc(db, "Users", userID), {
 				submissionCount: newSubmissionCount,
 			});
-
 			router.replace("/completed");
 		} else {
 			throw new Error("User ID not found");
 		}
-	};
+		setIsLoading(false);
+	}
 
 	return (
 		<SafeAreaView style={styles.container}>
+			{isLoading && <Loading/>}
 			<View
 				style={{
 					flexDirection: "row",
@@ -602,7 +610,9 @@ export default function Form() {
 								color={isChecked ? "#508991" : "black"}
 							/>
 
-							<Text style={[stylesDefault.text, {marginLeft: 10, width: 'auto'}]}>
+							<Text
+								style={[stylesDefault.text, { marginLeft: 10, width: "auto" }]}
+							>
 								{timeItem.time}
 							</Text>
 						</TouchableOpacity>
@@ -610,6 +620,7 @@ export default function Form() {
 				</View>
 				<View style={styles.questionCard}>
 					<Text style={stylesDefault.text}>{t("q8")}</Text>
+					{image && <Image source={{ uri: image }} style={styles.imageArea} />}
 					<TouchableOpacity
 						style={[
 							stylesDefault.button,
@@ -661,7 +672,7 @@ export default function Form() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: StatusBar.currentHeight,
+		marginTop: StatusBar.currentHeight,
 		backgroundColor: "#F5F5F5",
 	},
 	scrollView: {
@@ -686,7 +697,7 @@ const styles = StyleSheet.create({
 		elevation: 2,
 	},
 	radioButtons: {
-		width: '100%',
+		width: "100%",
 		alignItems: "flex-start",
 		flexDirection: "column",
 	},
@@ -743,7 +754,7 @@ const styles = StyleSheet.create({
 	},
 	checkItem: {
 		flexDirection: "row",
-		width: '100%',
+		width: "100%",
 	},
 	checkBox: {
 		borderColor: "black",
@@ -765,4 +776,10 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		gap: 10,
 	},
+	imageArea: {
+		width: '100%',
+		height: 200,
+		borderRadius: 10,
+		borderWidth: 1, 
+	}
 });
