@@ -9,9 +9,6 @@ import { getAuth, signInAnonymously } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
-
-
-
 export default function Index() {		
 	const { t, i18n } = useTranslation();
 	

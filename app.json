@@ -22,7 +22,12 @@
         "backgroundColor": "#ffffff"
       },
       "googleServicesFile": "./google-services.json",
-      "package": "com.flyspyteam.flyspy"
+      "package": "com.flyspyteam.flyspy",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBRAhO412ygIBBiGb2b2JX9NbSlGeQTsb4"
+        }
+      }
     },
     "web": {
       "bundler": "metro",

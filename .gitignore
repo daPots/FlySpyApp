@@ -9,8 +9,9 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
-firebaseConfig.ts
-google-services.json 
+.env
+#firebaseConfig.ts
+#google-services.json 
 # macOS
 .DS_Store
 

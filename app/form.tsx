@@ -9,7 +9,7 @@ import Checkbox from 'expo-checkbox';
  // documentation for checkbox: https://docs.expo.dev/versions/latest/sdk/checkbox/
 import * as ImagePicker from "expo-image-picker";
 // documentation for date picker: https://github.com/react-native-datetimepicker/datetimepicker?tab=readme-ov-file
-import MapView, {Marker, MapPressEvent} from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 // documentation for map view: https://docs.expo.dev/versions/latest/sdk/map-view/
 import * as Location from 'expo-location';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -144,16 +144,16 @@ export default function Form() {
 	const handleLocateMe = async () => {
 		let { status } = await Location.requestForegroundPermissionsAsync();
 		if (status !== "granted") {
-			alert("Permission to access location was denied");
-			return;
+		  alert("Permission to access location was denied");
+		  return;
 		}
-
+	
 		let userLocation = await Location.getCurrentPositionAsync({});
 		const { latitude, longitude } = userLocation.coords;
 		setLocation({ latitude, longitude });
-		setCoordsText(`${latitude}, ${longitude}`);
-	};
-	const handleMapPress = (event: MapPressEvent) => {
+		setCoordsText(`${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
+	  };
+	const handleMapPress = (event: any) => {
 		const { latitude, longitude } = event.nativeEvent.coordinate;
 		setLocation({ latitude, longitude });
 		setCoordsText(`${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
@@ -353,6 +353,17 @@ export default function Form() {
 
 	// submit form -> send data to backend/database
 	const handleSubmit = async () => {
+		if (
+			!selectedFlyIdentify ||
+			!selectedDate ||
+			!selectedLocationType ||
+			!location ||
+			!selectedFlower ||
+			!isChecked.some((checked) => checked)
+		) {
+			alert(t("fieldsRequired"));
+			return;
+		}
 		setIsLoading(true);
 		try {
 			const user = auth.currentUser;
@@ -536,19 +547,20 @@ export default function Form() {
 							width: "100%",
 						}}
 					>
-						{/* <MapView
-								style={styles.map}
-								showsUserLocation={true}
-								onPress={handleMapPress}
-								initialRegion={{
-									latitude: location.latitude,
-									longitude: location.longitude,
-									latitudeDelta: 0.0922,
-									longitudeDelta: 0.0421,
-								}}
-							>
-								<Marker coordinate={location} />
-							</MapView> */}
+						<MapView
+							provider={PROVIDER_GOOGLE} // Use Google Maps
+							style={styles.map}
+							showsUserLocation={true}
+							onPress={handleMapPress}
+							initialRegion={{
+								latitude: location.latitude,
+								longitude: location.longitude,
+								latitudeDelta: 0.0922,
+								longitudeDelta: 0.0421,
+							}}
+						>
+							<Marker coordinate={location} />
+						</MapView>
 						<TouchableOpacity
 							style={[
 								stylesDefault.button,

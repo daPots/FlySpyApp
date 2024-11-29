@@ -28,7 +28,7 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>myapp</string>
-          <string>com.deleganlab.flyspy</string>
+          <string>com.flyspyteam.flyspy</string>
         </array>
       </dict>
       <dict>
