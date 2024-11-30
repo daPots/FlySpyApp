@@ -1,12 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
-import {
-	getAuth,
-	initializeAuth,
-	getReactNativePersistence,
-	inMemoryPersistence,
-} from "firebase/auth";
+import { getAuth, initializeAuth, getReactNativePersistence, 
+		inMemoryPersistence} from "firebase/auth";
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 import { getFirestore } from "firebase/firestore";
 
@@ -16,14 +12,13 @@ import { getFirestore } from "firebase/firestore";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-	apiKey: "AIzaSyDD2vfiUnvovixbbJ4UN72_pbGm1QxdgLI",
-	authDomain: "flyspy-team.firebaseapp.com",
-	projectId: "flyspy-team",
-	// storageBucket: "flyspy-team.appspot.com",
-	storageBucket: "flyspy-team.firebasestorage.app",
-	messagingSenderId: "1006732287621",
-	appId: "1:1006732287621:web:69d72d727a2e5c6a31d3ec",
-	measurementId: "G-PXYTXMP23N",
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
