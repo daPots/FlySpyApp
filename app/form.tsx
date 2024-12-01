@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { router } from 'expo-router';
 import {SafeAreaView,View,ScrollView,Text,StyleSheet,StatusBar,Image,TextInput, TouchableOpacity, FlatList, Platform, Alert} from 'react-native';
 import RadioGroup, {RadioButtonProps} from 'react-native-radio-buttons-group';
@@ -19,6 +19,7 @@ import Loading from "./loading";
 import stylesDefault from "./styles";
 
 
+
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db, storage } from "../firebaseConfig";
 import {
@@ -33,6 +34,8 @@ import { FontAwesome5 } from '@expo/vector-icons';
 
 export default function Form() {
 	const [isLoading, setIsLoading] = useState(false);
+	const startTime = Date.now();
+	
 	const { t, i18n } = useTranslation();
 	// options for "have you seen flies on flowers as pictured below?"
 	const [selectedFlyIdentify, setSelectedFlyIdentify] = useState<
@@ -289,23 +292,47 @@ export default function Form() {
 			mediaTypes: ImagePicker.MediaTypeOptions.All,
 			allowsEditing: true,
 			aspect: [4, 3],
-			quality: 1,
+			quality: .5,
 		});
 		if (!result.canceled) setImage(result.assets[0].uri);
 
 	};
 
 
-	const uploadImageToFirebase = async (uri: string): Promise<string | null> => {
+	const uploadImageToFirebase = async (
+		uri: string,
+		uid: string
+	): Promise<string | null> => {
 		try {
 			const response = await fetch(uri);
 			const blob = await response.blob();
 
-			const filename = `images/${Date.now()}-${Math.random()
+			const filename = `images/${uid}/${Date.now()}-${Math.random()
 				.toString(36)
 				.substring(7)}.jpg`;
+			
+	// 		ImageResizer.createResizedImage(
+	// 			uri,
+	// 			newWidth,
+	// 			newHeight,
+	// 			'JPEG',
+	// 			50,
+	// 			0,
+	// 			filename
+	// 		)
+	// 			.then((response) => {
+	// 				// response.uri is the URI of the new image that can now be displayed, uploaded...
+	// 				// response.path is the path of the new image
+	// 				// response.name is the name of the new image with the extension
+	// 				// response.size is the size of the new image
+	// 			})
+	// 			.catch((err) => {
+	// 				// Oops, something went wrong. Check that the filename is correct and
+	// 				// inspect err to get more details.
+	// 			});
+			
 			const storageRef = ref(storage, filename);
-
+			console.log(filename);
 			const uploadTask = uploadBytesResumable(storageRef, blob);
 
 			return new Promise((resolve, reject) => {
@@ -320,6 +347,7 @@ export default function Form() {
 					(error) => {
 						// Handle unsuccessful uploads and show error alert
 						console.error("Upload error:", error);
+						setIsLoading(false);
 						Alert.alert(
 							"Upload Error",
 							"Failed to upload image. Please try again."
@@ -347,6 +375,7 @@ export default function Form() {
 
 
 
+
 	// storing additional information
 	const [additionalInfo, setAdditionalInfo] = useState<string>("");
 
@@ -364,6 +393,10 @@ export default function Form() {
 			alert(t("fieldsRequired"));
 			return;
 		}
+		if (Date.now() - startTime < 15000) { // if user completed form in less than 15s
+			alert(t("slowDown"));
+			return;
+		}
 		setIsLoading(true);
 		try {
 			const user = auth.currentUser;
@@ -374,9 +407,10 @@ export default function Form() {
 			let imageUrl: string | null = null;
 			if (image) {
 				try {
-					imageUrl = await uploadImageToFirebase(image);
+					imageUrl = await uploadImageToFirebase(image, userID);
 				} catch (uploadError) {
 					console.error("Image upload failed:", uploadError);
+					setIsLoading(false);
 					Alert.alert(
 						"Image Upload Failed",
 						"Failed to upload image, but we can still submit the form without it. Would you like to continue?",

@@ -82,6 +82,7 @@
 	"Submit": "提交表格",
 	"loading": "加载 。。。",
 	"fieldsRequired": "請在提交表格前回答所有必填項。",
+	"slowDown": "你开得太快了！请等待几秒钟后再提交。",
 
 	"formSubmitted": "表格已提交",
 	"thankYou": "感謝您參與台灣翼點計畫！",

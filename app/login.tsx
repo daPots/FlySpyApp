@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { auth } from '@/firebaseConfig';
 import { FirebaseError } from '@firebase/util';
@@ -12,27 +12,31 @@ import {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     sendPasswordResetEmail,
+    sendEmailVerification,
+    User,
+    UserCredential,
 } from "firebase/auth";
 import { router } from 'expo-router';
 import { FontAwesome5, FontAwesome } from "@expo/vector-icons";
+import { UserInterfaceIdiom } from 'expo-constants';
 
 const authCodeToMessage = (t: Function, errorCode: string) => {
     switch (errorCode) {
-        case "auth/email-already-in-use":
-            return t("emailUsed");
-        case "auth/user-not-found":
-            return t("userNotFound");
-        case "auth/invalid-email":
-            return t("invalidEmail");
-        case "auth/weak-password":
-            return t("weakPassword");
-        case "auth/wrong-password":
-            return t("incorrectPassword");
-        case "auth/missing-password":
-            return t("missingPassword");
-        default:
-            return t("unknownError");
-    }
+			case "auth/email-already-in-use":
+				return t("emailUsed");
+			case "auth/user-not-found":
+				return t("userNotFound");
+			case "auth/invalid-email":
+				return t("invalidEmail");
+			case "auth/weak-password":
+				return t("weakPassword");
+			case "auth/wrong-password":
+				return t("incorrectPassword");
+			case "auth/missing-password":
+				return t("missingPassword");
+			default:
+				return t("unknownError");
+		}
 };
 
 const resetPassword = async (t: Function, email: string) => {
@@ -67,40 +71,104 @@ export default function Login() {
         return null;
     };
 
-    const signIn = async () => {
-        const validationError = validateInputs();
-        if (validationError) {
-            setErrorMessage(validationError);
-            return;
+    const checkVerif = async(user:User, userCred: UserCredential) => {
+        await user.reload();
+        if (user.emailVerified) {
+            alert("Email has been successfully verified!");
+			router.push("/home");
         }
+        else {
+            Alert.alert(
+							"Your email isn't verified yet",
+							"Please verify your email",
+							[
+								{
+									text: "Cancel",
+									style: "cancel",
+								},
+								{
+									text: "Resend",
+									onPress: () =>
+										sendEmailVerification(user)
+											.then(() => {
+												alert("New email has been sent");
+												checkVerif(user, userCred);
+											})
+											.catch((error) => alert(error.message)),
+								},
 
-        setLoading(true);
-        setErrorMessage('');
-        try {
-            if (isLogin) {
-                await signInWithEmailAndPassword(auth, email, password);
-                router.push('/home');
-            } else {
-                const userCred = await createUserWithEmailAndPassword(auth, email, password);
-                const userID = userCred?.user?.uid;
-                await setDoc(doc(db, "Users", userID), {
-                    name: name,
-                    email: email,
-                    submissionCount: 0,
-                });
-                router.push('/home');
-            }
-        } catch (error) {
-            if (error instanceof FirebaseError) {
-                const message = authCodeToMessage(t, error.code);
-                setErrorMessage(message);
-            } else {
-                setErrorMessage(t("unknownError"));
-            }
-        } finally {
-            setLoading(false);
+								{
+									text: "Verified!",
+									onPress: () => checkVerif(user, userCred),
+								},
+							]
+						);
+            return;    
         }
-    };
+    }
+
+    const signIn = async () => {
+			const validationError = validateInputs();
+			if (validationError) {
+				setErrorMessage(validationError);
+				return;
+			}
+			setLoading(true);
+			setErrorMessage("");
+			try {
+				if (isLogin) {
+                    const userCred = await signInWithEmailAndPassword(auth, email, password);
+                    const user = auth.currentUser;
+                    if (user) {
+                        if (user?.emailVerified) {
+                            router.push("/home");
+                        }
+                        else {
+                            checkVerif(user, userCred);
+                        }  
+                    }
+                    else {
+                        console.log("No user found.");
+                    }
+                } else {
+                    const userCred = await createUserWithEmailAndPassword(
+						auth,
+						email,
+						password
+                    );
+                    const userID = userCred?.user?.uid;
+					await setDoc(doc(db, "Users", userID), {
+						name: name,
+						email: email,
+						submissionCount: 0,
+						subscriptionStatus: false,
+                    });
+                    
+                    const user = auth.currentUser;
+					auth.useDeviceLanguage(); // matches email text to device's language
+					user
+						? sendEmailVerification(user)
+								.then(() => {
+									alert(`Verification has been sent to ${email}!`);
+									checkVerif(user, userCred);
+								})
+								.catch((error) => alert(error.message))
+						: console.log("No user found.");
+				}
+			} catch (error) {
+				if (error instanceof FirebaseError) {
+                    console.log(error.code);
+                    const message = authCodeToMessage(t, error.code);
+					setErrorMessage(message);
+				} else {
+                    setErrorMessage(t("unknownError"));
+                    console.log("Error:", error);
+				}
+			} finally {
+				setLoading(false);
+			}
+		};
+
 
     return (
         <KeyboardAvoidingView style={styles.container} behavior='height'>
