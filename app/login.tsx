@@ -7,6 +7,7 @@ import stylesDefault from './styles';
 import { useTranslation } from 'react-i18next';
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
+import { useGuest } from "./guestContext";
 
 import {
     signInWithEmailAndPassword,
@@ -54,6 +55,7 @@ const resetPassword = async (t: Function, email: string) => {
 
 export default function Login() {
     const { t } = useTranslation();
+    const { isGuest, setIsGuest } = useGuest();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -75,6 +77,7 @@ export default function Login() {
         await user.reload();
         if (user.emailVerified) {
             alert("Email has been successfully verified!");
+            setIsGuest(false);
 			router.push("/home");
         }
         else {
@@ -121,6 +124,7 @@ export default function Login() {
                     const user = auth.currentUser;
                     if (user) {
                         if (user?.emailVerified) {
+                            setIsGuest(false);
                             router.push("/home");
                         }
                         else {

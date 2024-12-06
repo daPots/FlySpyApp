@@ -24,7 +24,7 @@ const stylesDefault = StyleSheet.create({
 		fontWeight: "700",
 	},
 	title3: {
-		fontSize: 20,
+		fontSize: 18,
 		color: "#1E314F",
 		fontWeight: "500",
 	},
@@ -33,6 +33,12 @@ const stylesDefault = StyleSheet.create({
 	    width: '100%',
 		color: "#1E314F",
 		fontFamily: "NunitoSansMedium",
+	},
+	textBold: {
+		fontSize: 17,
+	    width: '100%',
+		color: "#1E314F",
+		fontFamily: "NunitoSansBold",
 	},
 	subText: {
 		color: "#1E314F",

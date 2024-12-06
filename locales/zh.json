@@ -13,6 +13,7 @@
 	"unknownError": "未知錯誤",
 	"checkEmail": "檢查您的電子郵件！",
 	"weakPassword": "密碼太弱",
+	"passwordNotMeetingReq": "密碼必須包含大寫字元和非字母數字字符",
 
 	"name": "姓名",
 	"email": "電子郵件",
@@ -75,6 +76,7 @@
 	"q7.9": "下午 6 點至 8 點之間",
 	"q7.10": "晚上 8 點至 10 點之間",
 	"q7.11": "晚上 10 點至凌晨 12 點之間",
+	"noGuestPicture": "請登入或註冊才能上傳圖片",
 	"q8": "如果您拍攝了果蠅的照片，請在此處上傳。[首選 jpg、png 或 tiff 格式]",
 	"q8Upload": "上傳",
 	"q8Reupload": "重新上傳",

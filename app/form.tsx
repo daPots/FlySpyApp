@@ -17,8 +17,7 @@ import { useTranslation } from 'react-i18next';
 import LanguageToggleButton from './langToggle';
 import Loading from "./loading";
 import stylesDefault from "./styles";
-
-
+import { useGuest } from "./guestContext";
 
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db, storage } from "../firebaseConfig";
@@ -33,6 +32,8 @@ import { FontAwesome5 } from '@expo/vector-icons';
 
 
 export default function Form() {
+	const { isGuest, setIsGuest } = useGuest();
+
 	const [isLoading, setIsLoading] = useState(false);
 	const startTime = Date.now();
 	
@@ -582,7 +583,7 @@ export default function Form() {
 						}}
 					>
 						<MapView
-							provider={PROVIDER_GOOGLE} // Use Google Maps
+							provider={PROVIDER_GOOGLE}
 							style={styles.map}
 							showsUserLocation={true}
 							onPress={handleMapPress}
@@ -617,7 +618,7 @@ export default function Form() {
 								<TextInput
 									placeholder={t("q5Coordinates")}
 									value={coordsText}
-									editable={false}
+									editable={true}
 								/>
 							</View>
 						</View>
@@ -664,7 +665,7 @@ export default function Form() {
 						</TouchableOpacity>
 					))}
 				</View>
-				<View style={styles.questionCard}>
+				{!isGuest && <View style={styles.questionCard}>
 					<Text style={stylesDefault.text}>{t("q8")}</Text>
 					{image && <Image source={{ uri: image }} style={styles.imageArea} />}
 					<TouchableOpacity
@@ -683,8 +684,10 @@ export default function Form() {
 							{image ? t("q8Reupload") : t("q8Upload")}
 						</Text>
 					</TouchableOpacity>
-				</View>
-
+				</View>}
+				{isGuest && <View style={styles.questionCard}>
+					<Text style={stylesDefault.textBold}>{t("noGuestPicture")}</Text>
+				</View>}
 				<View style={styles.questionCard}>
 					<Text style={stylesDefault.text}>{t("q9")}</Text>
 					<View style={{ flexDirection: "row", alignItems: "center" }}>

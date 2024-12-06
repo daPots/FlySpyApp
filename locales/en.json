@@ -13,6 +13,7 @@
 	"unknownError": "Unknown Error",
 	"checkEmail": "Check your email!",
 	"weakPassword": "Password is too weak",
+	"passwordNotMeetingReq": "Password must contain an upper case character, and a non-alphanumeric character",
 
 	"name": "Name",
 	"email": "Email",
@@ -75,6 +76,7 @@
 	"q7.9": "6PM - 8PM",
 	"q7.10": "8PM - 10PM",
 	"q7.11": "10PM - 12PM",
+	"noGuestPicture": "Please Log In or Sign Up to upload pictures",
 	"q8": "If you took a picture of the flies, please upload it here. [jpg, png, or tiff formats preferred]",
 	"q8Upload": "Upload",
 	"q8Reupload": "Reupload",

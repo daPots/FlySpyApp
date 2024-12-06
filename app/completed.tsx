@@ -6,9 +6,12 @@ import LanguageToggleButton from './langToggle';
 import stylesDefault from './styles';
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
+import { useGuest } from "./guestContext";
 
 export default function Completed() {
     const { t, i18n } = useTranslation();
+    const { isGuest, setIsGuest } = useGuest();
+
     const [isSubscribed, setIsSubscribed] = useState(false);
 
     // Fetch subscription status when component mounts
@@ -71,10 +74,10 @@ export default function Completed() {
                 >
                     {t("thankYou")}
                 </Text>
-                <Text style={[stylesDefault.text, { textAlign: "center" }]}>
+                {!isGuest && <Text style={[stylesDefault.text, { textAlign: "center" }]}>
                     {isSubscribed ? t("unsubscribedMessage") : t("updates?")}
-                </Text>
-                <View style={styles.confirmationButtonContainer}>
+                </Text>}
+                {!isGuest && <View style={styles.confirmationButtonContainer}>
                     <TouchableOpacity
                         style={[
                             stylesDefault.button,
@@ -91,7 +94,7 @@ export default function Completed() {
                             {isSubscribed ? t("unsubscribe") : t("subscribe")}
                         </Text>
                     </TouchableOpacity>
-                </View>
+                </View>}
                 <TouchableOpacity
                     style={[stylesDefault.button, { height: 50, width: "90%" }]}
                     onPress={() => router.replace("/home")}
@@ -130,7 +133,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: "10%",
 		alignItems: "center",
 		justifyContent: "center",
-		marginBottom: "10%",
+		marginBottom: "5%",
 		// Shadow for iOS
 		shadowColor: "#000",
 		shadowOffset: { width: 0, height: 2 },

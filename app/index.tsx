@@ -8,9 +8,11 @@ import stylesDefault from './styles';
 import { getAuth, signInAnonymously } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
+import { useGuest } from "./guestContext";
 
 export default function Index() {		
 	const { t, i18n } = useTranslation();
+	const { isGuest, setIsGuest } = useGuest();
 	
 	const [fontsLoaded] = useFonts({
 		NunitoSansRegular: require("../assets/fonts/NunitoSansRegular.ttf"),
@@ -35,6 +37,7 @@ export default function Index() {
 				email: "N/A",
 				submissionCount: 0,
 			});
+			setIsGuest(true);
 			console.log("Sucessfully signed in anonymously");
 			router.replace("/home");
 		} catch (error) {
